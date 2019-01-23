@@ -1,0 +1,26 @@
+---
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_eip_name }}" }
+    - { key: Service, value: ec2_eni }
+
+- name: allocate and attach Elastic IP to ENI
+  ec2_eip:
+    state: present
+    reuse_existing_ip_allowed: yes
+    allow_reassociation: yes
+    device_id: "{{ my_ec2_eni.interface.id }}"
+    private_ip_address: "{{ vpc_eni_private_ip_address }}"
+#    public_ip: "{{ my_ec2_eip.public_ip }}"
+    region: "{{ vpc_region }}"
+    in_vpc: yes
+  register: my_ec2_eip
+
+- name: Ensure tags are present on EIP
+  ec2_tag:
+    state: present
+    region: "{{ vpc_region }}"
+    resource: "{{ my_ec2_eip.allocation_id }}"
+    tags: "{{ merged_tags }}"

@@ -1,0 +1,14 @@
+---
+- name: configure git User
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{ ansible_git_user_name }}"
+
+- name: configure git Email
+  become: yes
+  become_user: admin
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{ ansible_git_user_email }}"

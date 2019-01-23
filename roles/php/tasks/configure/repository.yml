@@ -1,0 +1,16 @@
+---
+- name: Add sury.org apt gpg key
+  become: yes
+  apt_key:
+    state: present
+    url: https://packages.sury.org/php/apt.gpg
+    keyring: /etc/apt/trusted.gpg.d/php.gpg
+
+- name: Add PHP7 repository from sury.org into sources list
+  become: yes
+  apt_repository:
+    state: present
+    codename: stretch
+    filename: php
+    update_cache: yes
+    repo: deb https://packages.sury.org/php/ stretch main

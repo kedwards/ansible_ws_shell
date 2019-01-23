@@ -1,0 +1,18 @@
+---
+- name: create Subnet
+  ec2_vpc_subnet:
+    state: present
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    cidr: "{{ item.cidr }}"
+    az: "{{ item.az }}"
+    region: "{{ vpc_region }}"
+    map_public: "{{ item.map_ip }}"
+    tags:
+      Name: "{{ item.name }}"
+      Service: ec2_vpc_subnet
+      Environment: "{{ vpc_env }}"
+      Owner: "{{ vpc_owner_name }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+  with_items: "{{ vpc_subnets }}"
+  register: my_ec2_vpc_subnet

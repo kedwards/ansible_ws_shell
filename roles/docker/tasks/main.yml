@@ -1,0 +1,34 @@
+---
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates wget software-properties-common  curl software-properties-common gnupg2
+
+wget https://download.docker.com/linux/debian/gpg
+sudo apt-key add gpg
+
+
+echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee -a /etc/apt/sources.list.d/docker.list
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+
+sudo apt-get update
+
+Make sure you are installing Docker from the official repository, not from the default Debian repository.
+
+sudo apt-cache policy docker-ce
+
+sudo apt-get -y install docker-ce
+
+sudo systemctl enable docker
+
+sudo groupadd docker
+
+sudo useradd admin
+
+sudo usermod -aG docker admin
+
+sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+mkdir -p /dockerdmo/trafeik
+touch /dockerdemo/docker-compose.yml /dockerdemo/traefik/traefik.toml /dockerdemo/traefik/acme.json
+chmod 600 acme.json

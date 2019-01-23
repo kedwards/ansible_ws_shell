@@ -1,0 +1,8 @@
+---
+- name: Configure IP tables to allow masquerading
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    out_interface: eth0
+    protocol: all
+    jump: MASQUERADE

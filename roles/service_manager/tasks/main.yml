@@ -1,0 +1,113 @@
+---
+#- name: Debug
+#  debug:
+#    msg: "The hosts are {{ item.hosts }}"
+#  with_items: '{{ services | default([]) }}'
+    
+- name: Registry [Description]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}'
+    name: Description
+    data: "OpenLink Endur ({{ item.name }}) Service for database endur on {{ item.db }}"
+    type: string
+  with_items: '{{ services | default([]) }}'
+ 
+- name: Registry [DisplayName]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}'
+    name: DisplayName
+    data: 'OpenLink Endur ({{ item.name }})'
+    type: string
+  with_items: '{{ services | default([]) }}'
+
+- name: Registry [ErrorControl]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}'
+    name: ErrorControl
+    data: '{{ item.error }}'
+    type: dword
+  with_items: '{{ services | default([]) }}'
+
+- name: Registry [ImagePath]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}'
+    name: ImagePath
+    data: 'D:\Openlink\Endur\{{ item.ver }}\bin.win64\master.exe -nt_service OpenLink_Endur_{{ item.name }}'
+    type: expandstring
+  with_items: '{{ services | default([]) }}'
+
+- name: Registry [ObjectName]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}'
+    name: ObjectName
+    data: 'CNPL\{{ ansible_user[0:13] }}'
+    type: string
+  with_items: '{{ services | default([]) }}'
+  
+- name: Registry [Start]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}'
+    name: Start
+    data: '{{ item.start }}'
+    type: dword
+  with_items: '{{ services | default([]) }}'
+  
+- name: Registry [Type]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}'
+    name: Type
+    data: '{{ item.type }}'
+    type: dword
+  with_items: '{{ services | default([]) }}'
+
+- name: Registry [AB_LOGON_DATABASE]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}\EnvVars'
+    name: AB_LOGON_DATABASE
+    data: '{{ ab_logon_database }}'
+    type: string
+  with_items: '{{ services | default([]) }}'
+ 
+- name: Registry [AB_LOGON_SERVER]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}\EnvVars'
+    name: AB_LOGON_SERVER
+    data: '{{ item.db }}'
+    type: string
+  with_items: '{{ services | default([]) }}'
+  
+- name: Registry [AB_LOGON_USER]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}\EnvVars'
+    name: AB_LOGON_USER
+    data: '{{ ansible_user[0:13] }}'
+    type: string    
+  with_items: '{{ services | default([]) }}'
+  
+- name: Registry [Security]
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\services\OpenLink_Endur_{{ item.name }}\Security'
+    name: Security
+    data: hex:01,00,14,80,b0,00,00,00,bc,00,00,00,14,00,00,00,30,00,00,00,02,00,1c,00,01,00,00,00,02,80,14,00,ff,01,0f,00,01,01,00,00,00,00,00,01,00,00,00,00,02,00,80,00,05,00,00,00,00,00,14,00,fd,01,02,00,01,01,00,00,00,00,00,05,12,00,00,00,00,00,18,00,ff,01,0f,00,01,02,00,00,00,00,00,05,20,00,00,00,20,02,00,00,00,00,14,00,8d,01,02,00,01,01,00,00,00,00,00,05,04,00,00,00,00,00,14,00,8d,01,02,00,01,01,00,00,00,00,00,05,06,00,00,00,00,00,24,00,34,00,00,00,01,05,00,00,00,00,00,05,15,00,00,00,99,73,39,e2,db,3a,86,4d,a2,59,13,f2,03,20,00,00,01,01,00,00,00,00,00,05,12,00,00,00,01,01,00,00,00,00,00,05,12,00,00,00
+    type: binary
+  with_items: '{{ services | default([]) }}'
+  
+- name: Registry [AB_LOGON_CREDENTIALS]
+  win_regedit:
+    path: 'HKLM:\SOFTWARE\OpenLink\OpenLink_Endur_{{ item.name }}\V8.X\endur.{{ item.db }}\{{ ansible_user[0:13] }}\{{ inventory_hostname }}'
+    name: AB_LOGON_CREDENTIALS
+    data: ''
+    type: string
+  with_items: '{{ services | default([]) }}'
+
+- name: Creating Service with configuration
+  win_service:
+    name: 'OpenLink_Endur_{{ item.name }}'
+    path: 'D:\Openlink\Endur\{{ item.ver }}\bin.win64\master.exe -nt_service OpenLink_Endur_{{ item.name }}'
+    display_name: 'OpenLink Endur ({{ item.name }})'
+    description: 'OpenLink Endur ({{ item.name }}) Service for database endur on {{ item.db }}'
+    username: 'CNPL\{{ ansible_user[0:13] }}'
+    password: '{{ service_password }}'
+    start_mode: '{{ item.mode }}'
+    state: '{{ item.state }}'
+  with_items: '{{ services | default([]) }}'

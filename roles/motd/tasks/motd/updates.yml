@@ -1,0 +1,8 @@
+---
+- name: check or create 20-updates MOTD file
+  copy:
+    src: 20-updates.motd.py
+    dest: /etc/update-motd.d/20-updates
+    owner: root
+    group: root
+    mode: "u+rwx,g-rwx,o+rw"

@@ -1,0 +1,15 @@
+---
+- name: Copy the nginx configuration file
+  template:
+    src: nginx.conf.j2
+    dest: "{{ __nginx_conf_dir }}/nginx.conf"
+    backup: yes
+
+- name: Ensure auth_basic files created
+  template:
+    src: passwd.j2
+    dest: "{{ __nginx_conf_dir }}/auth_basic/{{ item.key }}"
+    mode: 0750
+    group: "{{ __nginx_group }}"
+    backup: yes
+  with_dict: "{{ __nginx_auth_basic_files }}"

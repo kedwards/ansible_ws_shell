@@ -1,0 +1,32 @@
+---
+- include: facts.yml
+
+- name: Create Working Directory
+  win_file:
+    path: '{{ automation_path }}'
+    state: directory
+    
+- name: Retrieving Dependencies
+  win_get_url:
+    url: '{{ file_repository }}/{{ item }}'
+    dest: '{{ automation_path }}\{{ item }}'
+    force: no
+  with_items:
+    - '{{ product_ps1 }}'
+    - '{{ product_bin }}'
+    - '{{ product_zip }}'
+ 
+- name: Installing
+  win_shell: '{{ automation_path }}\{{ product_ps1 }}'
+  args:
+    chdir: '{{ automation_path }}'
+    
+- name: Merging Bin Directory
+  win_unzip:
+    src: '{{ automation_path }}\{{ product_zip }}'
+    dest: '{{ install_path }}'
+    
+- name: Clean Up
+  win_file:
+    path: '{{ root }}'
+    state: absent    

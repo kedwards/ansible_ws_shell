@@ -1,0 +1,16 @@
+---
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_name }}" }
+    - { key: Service, value: ec2_vpc_net }
+
+- name: create VPC
+  ec2_vpc_net:
+    state: present
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"
+    region: "{{ vpc_region }}"
+    tags: "{{ merged_tags }}"
+  register: my_ec2_vpc_net

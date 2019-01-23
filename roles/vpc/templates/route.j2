@@ -1,0 +1,22 @@
+{
+  "vpc_routes": [
+    {% for __vpc_route in __to_template_vpc_routes %}
+    {
+      "name": "{{ __vpc_route.name }}",
+      "subnets": "{{ __vpc_route.subnets }}",
+      "routes": [
+        {% for route in __vpc_route.routes %}
+        {
+          "dest": "{{ route.dest }}",
+          {% if route.type == "instance" %}
+          "instance_id": "{{ route.instance_id }}"
+          {% elif route.type == "gateway" %}
+          "gateway_id": "{{ route.gateway_id }}"
+          {% endif %}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}

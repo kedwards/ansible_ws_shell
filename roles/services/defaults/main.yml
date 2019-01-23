@@ -1,0 +1,23 @@
+---
+service_mode: '{{ svc_state|default("auto") }}'
+service_password: '{{ sevice_password }}'
+
+services:
+  prod:
+    - Production
+    - Daily
+  dev:
+    - DailyDev
+    - Dev01
+    - Dev02
+    - Dev03
+    - Dev04
+    - Dev05
+    - Test01
+    - Test02
+    - Test03
+    - Test04
+    - Test05
+    - Test06
+    - UAT01
+    - UAT02

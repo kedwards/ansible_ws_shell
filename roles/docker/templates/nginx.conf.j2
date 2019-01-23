@@ -1,0 +1,47 @@
+user  {{ __nginx_bin_user }};
+
+worker_processes  {{ __nginx_worker_processes }};
+
+error_log  {{ __nginx_error_log }};
+pid        {{ __nginx_pidfile }};
+
+events {
+    worker_connections  {{ __nginx_worker_connections }};
+}
+
+http {
+    include             mime.types;
+    default_type        application/octet-stream;
+
+    log_format  main    {{ __nginx_log_format | indent(23) }};
+
+    access_log          {{ __nginx_access_log }};
+
+    sendfile            {{ __nginx_sendfile }};
+    keepalive_timeout   {{ __nginx_keepalive_timeout }};
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+
+    include {{ __nginx_conf_dir }}/conf.d/*.conf;
+
+    include {{ __nginx_conf_dir  }}/sites-enabled/*;
+}
+
+stream {
+    include {{ __nginx_conf_dir }}/conf.d/stream/*.conf;
+}

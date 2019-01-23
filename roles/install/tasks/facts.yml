@@ -1,0 +1,22 @@
+---
+- name: Gathering Facts [x64]
+  set_fact:
+    install_path: '{{ product_path }}\Uninstall'
+    registry_path: 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{A344C17F-2488-4763-A415-727AF958BA2E}'
+    product_zip: bin.win64.zip
+    product_path: bin.win64
+    product_bin: '{{ product_executable }}_MSWinX64.exe'
+    product_ps1: openlink_install_x64.ps1
+  when: >
+    server_type == 'app'
+
+- name: Gathering Facts [x86]
+  set_fact:
+    install_path: '{{ product_path }}'
+    registry_path: 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{D6CAC924-0698-427C-BE0F-81385B3326DC}'
+    product_zip: bin.zip
+    product_path: bin
+    product_bin: '{{ product_executable }}_MSWin32.exe'
+    product_ps1: openlink_install_x86.ps1
+  when: >
+    server_type == 'citrix'

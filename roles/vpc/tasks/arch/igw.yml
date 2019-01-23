@@ -1,0 +1,14 @@
+---
+- name: Provision Internet Gateway
+  ec2_vpc_igw:
+    state: present
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    region: "{{ __vpc_region }}"
+    tags:
+      Name: "{{ __vpc_igw_name }}"
+      Service: ec2_vpc_igw
+      Env: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+  register: my_ec2_vpc_igw

@@ -1,0 +1,12 @@
+---
+- name: Retrieve Server list
+  set_fact: 
+    all_services: "{{ services.dev + services.prod }}"
+
+- name: Verifying Service Configuration
+  set_fact: 
+    is_valid_service_cfg: (host_env == "nonprod" and service in services.dev) or (host_env == "prod" and service in services.prod)
+    
+- name: Validating Service
+  fail: msg="Invalid Openlink Service {{ service }}, contact MRM Support."
+  when: service not in all_services

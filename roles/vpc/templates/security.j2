@@ -1,0 +1,35 @@
+{
+  "vpc_security_groups": [
+    {% for __vpc_security_group in __to_template_vpc_security_groups %}
+    {
+      "description": "{{ __vpc_security_group.description }}",
+      "name": "{{ __vpc_security_group.name }}",
+      "region": "{{ __vpc_security_group.region }}",
+      "rules": [
+        {% for rule in __vpc_security_group.rules %}
+        {
+          "proto": "{{ rule.proto }}",
+          {% if rule.proto != -1 %}
+          "from_port": "{{ rule.from_port }}",
+          "to_port": {{ rule.to_port }},
+          {% endif %}
+          "cidr_ip": "{{ rule.cidr_ip }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ],
+      "rules_egress": [
+        {% for rule in __vpc_security_group.rules_egress %}
+        {
+          "proto": "{{ rule.proto }}",
+          {% if rule.proto != -1 %}
+          "from_port": "{{ rule.from_port }}",
+          "to_port": {{ rule.to_port }},
+          {% endif %}
+          "cidr_ip": "{{ rule.cidr_ip }}",
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}

@@ -1,0 +1,8 @@
+---
+- name: check or create 30-custom MOTD file
+  copy:
+    src: 30-custom.motd.sh
+    dest: /etc/update-motd.d/30-custom
+    owner: root
+    group: root
+    mode: "u+rwx,g-rwx,o+rw"

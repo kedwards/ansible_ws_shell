@@ -1,0 +1,8 @@
+---
+__route53_host: "{{ route53_host }}"
+
+__route53_type: "{{ route53_type | default('CNAME')}}"
+__route53_ttl: "{{ route53_ttl | default('3600') }}"
+__route53_domain: "{{ route_53_domain | default('kevinedwards.ca') }}"
+
+__route53_fqdn: "{{ __route53_host }}.{{ __route53_domain }}"

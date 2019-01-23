@@ -1,0 +1,8 @@
+---
+- name: check or create 99-footer MOTD file
+  copy:
+    src: 99-footer.motd.sh
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: "u+rwx,g-rwx,o+rw"

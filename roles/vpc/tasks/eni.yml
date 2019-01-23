@@ -1,0 +1,30 @@
+---
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_eni_name }}" }
+    - { key: Service, value: ec2_eni }
+
+- name: create Elastic Network Interface
+  ec2_eni:
+    state: present
+    description: "ENI for Nat"
+    region: "{{ vpc_region }}"
+    security_groups: "{{ vpc_sgp_nat_name }}"
+    subnet_id: "{{ my_ec2_vpc_subnet.results.0.subnet.id }}"
+    private_ip_address: "{{ vpc_eni_private_ip_address }}"
+  register: my_ec2_eni
+
+- name: Ensure tags are present on ENI
+  ec2_tag:
+    state: present
+    region: "{{ vpc_region }}"
+    resource: "{{ my_ec2_eni.interface.id }}"
+    tags: "{{ merged_tags }}"
+
+- name: Disable source/dest check
+  ec2_eni:
+    eni_id: "{{ my_ec2_eni.interface.id }}"
+    region: "{{ vpc_region }}"
+    source_dest_check: false

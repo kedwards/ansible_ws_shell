@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+printf "************* Congratulations! ***************\n"
+printf "*          Ansible MOTD TEST role            *\n"
+printf "*                                            *\n"
+printf "*  Update /roles/motd/files/XX-<file>.motd   *\n"
+printf "*  to customize these message to your needs  *\n"
+printf "*                                            *\n"
+printf "*          Ansible MOTD TEST role            *\n"
+printf "************* Congratulations! ***************\n"
+printf "%s\n\n" "$(curl -s wttr.in?0)"

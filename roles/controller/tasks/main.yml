@@ -1,0 +1,44 @@
+---
+- name: Create Openlink Worspace Shell 
+  win_file: path='{{ item }}' state=directory
+  with_items: '{{ openlink_shell_template }}'
+  
+- name: Copy Binaries
+  win_copy: src='{{ openlink_binaries_source }}/{{ item }}.exe' dest='{{ openlink_32bit_root }}/{{ item }}.exe'
+  with_items: '{{ openlink_32bit_binaries }}'
+
+- name: Copy 32bit Zips
+  win_copy: src='{{ openlink_zips_source }}/{{ item }}.zip' dest='{{ openlink_32bit_zips }}/{{ item }}.zip'
+  with_items: '{{ openlink_32bit_zip_files }}'
+  
+- name: Copy 64bit Binaries
+  win_copy: src='{{ openlink_binaries_source }}/{{ item }}.exe' dest='{{ openlink_64bit_root }}/{{ item }}.exe'
+  with_items: '{{ openlink_64bit_binaries }}'
+
+- name: Copy 64bit Zips
+  win_copy: src='{{ openlink_zips_source }}/{{ item }}.zip' dest='{{ openlink_64bit_zips }}/{{ item }}.zip'
+  with_items: '{{ openlink_64bit_zip_files }}'
+
+- name: Unzip 64Bit Sources
+  win_unzip:
+    src: '{{ openlink_64bit_zips }}/{{ item }}.zip'
+    dest: '{{ openlink_64bit_unzip }}/{{ item }}'
+  with_items: '{{ openlink_64bit_zip_files }}'
+  
+- name: Unzip 32Bit Sources
+  win_unzip:
+    src: '{{ openlink_32bit_zips }}/{{ item }}.zip'
+    dest: '{{ openlink_32bit_unzip }}/{{ item }}'
+  with_items: '{{ openlink_32bit_zip_files }}'
+  
+- name: Copy all unzipped 64bit bin directories to CompleteBIN
+  win_shell: Copy-Item -Path '{{ openlink_64bit_unzip }}/{{ item }}/bin/*' -Destination '{{ openlink_64bit_complete_bin }}/bin.win64/' -Recurse -Force
+  with_items: '{{ openlink_64bit_zip_files }}'
+  
+- name: Copy all unzipped 32bit bin directories to CompleteBIN
+  win_shell: Copy-Item -Path '{{ openlink_32bit_unzip }}/{{ item }}/bin' -Destination '{{ openlink_32bit_complete_bin }}' -Recurse -Force
+  with_items: '{{ openlink_32bit_zip_files }}'
+
+- name: Copy RISPAK 32bit into 64bit _CompleteBIN
+  win_shell: Copy-Item -Path '{{ openlink_32bit_unzip }}/{{ item }}/bin/*' -Destination '{{ openlink_64bit_complete_bin }}/bin.win64/' -Recurse -Force
+  with_items: RISKPAK_2015_2_1_127_14JUL2015_V10_to_V15_V14_0_MSWin32

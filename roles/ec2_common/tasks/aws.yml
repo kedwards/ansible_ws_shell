@@ -1,0 +1,8 @@
+---
+- name: download AWS-CLI
+  get_url:
+    url: "{{ ec2_common_cli53_url }}"
+    dest: "{{ ec2_common_cli53_dest }}"
+    owner: admin
+    group: admin
+    mode: a+x

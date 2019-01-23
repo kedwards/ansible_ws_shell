@@ -1,0 +1,26 @@
+---
+- name: checkout Ansible source
+  git:
+    repo: https://github.com/ansible/ansible.git
+    dest: /usr/local/src/ansible
+    version: stable-2.7
+    update: no
+
+- name: changing perm of hacking/env-setup
+  file:
+    path: /usr/local/src/ansible/
+    mode: +x
+
+- name: build Ansible
+  shell: source ./hacking/env-setup
+  args:
+    creates: /usr/local/src/ansible/lib/ansible.egg-info/SOURCES.txt
+    chdir: /usr/local/src/ansible/
+    executable: /bin/bash
+
+- name: make & install Ansible
+  shell: make && make install
+  args:
+    creates: /usr/local/bin/ansible
+    chdir: /usr/local/src/ansible/
+    executable: /bin/bash

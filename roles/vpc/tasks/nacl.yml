@@ -1,0 +1,18 @@
+---
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_acl_private_name }}" }
+    - { key: Service, value: ec2_vpc_nacl }
+
+- name: create and associate ACL
+  ec2_vpc_nacl:
+    state: present
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    name: "{{ vpc_acl_private_name }}"
+    subnets: "{{ my_ec2_vpc_subnet.results.1.subnet.id }}"
+    tags: "{{ merged_tags }}"
+    ingress: "{{ vpc_acl_private_ingress }}"
+    egress: "{{ vpc_acl_private_egress }}"
+  register: my_private_ec2_vpc_nacl

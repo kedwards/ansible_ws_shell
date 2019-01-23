@@ -1,0 +1,29 @@
+---
+- name: create Elastic Network Interface
+  ec2_eni:
+    state: present
+    description: "{{ __vpc_eni_descr }}"
+    region: "{{ __vpc_region }}"
+    security_groups: "{{ __vpc_security_group_nat_name }}"
+    subnet_id: "{{ my_ec2_vpc_subnet.results.0.subnet.id }}"
+    private_ip_address: "{{ __vpc_eni_private_ip_address }}"
+  register: my_ec2_eni
+
+- name: Disable source/dest check on ENI
+  ec2_eni:
+    eni_id: "{{ my_ec2_eni.interface.id }}"
+    region: "{{ __vpc_region }}"
+    source_dest_check: false
+
+- name: Attach tags to ENI resource
+  ec2_tag:
+    state: present
+    region: "{{ __vpc_region }}"
+    resource: "{{ my_ec2_eni.interface.id }}"
+    tags:
+      Name: "{{ __vpc_eni_name }}"
+      Service: ec2_eni
+      Env: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"

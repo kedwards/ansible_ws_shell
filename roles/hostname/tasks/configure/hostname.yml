@@ -1,0 +1,37 @@
+---
+- name: Preserve hostname
+  lineinfile:
+    state: present
+    dest: /etc/cloud/cloud.cfg
+    regexp: '^preserve_hostname:\sfalse$'
+    line: "preserve_hostname: true"
+    backup: yes
+    backrefs: yes
+
+- name: Verify if hostname is correct
+  shell: hostname -f
+  register: hostname_set
+  changed_when: hostname_set.stdout != __hostname_fqdn
+
+- name: Set host in '/etc/hosts' file
+  lineinfile:
+    state: present
+    dest: /etc/hosts
+    regexp: '^(127.0.1.1)\sip-.*$'
+    line: '\1 {{ __hostname_fqdn }} {{ __hostname_host }}'
+    backup: yes
+    backrefs: yes
+
+- name: Set hostname --static
+  shell: hostnamectl set-hostname --static "{{ __hostname_host }}"
+  register: hostname_set
+  when: hostname_set.stdout != __hostname_fqdn
+
+- name: Ensure '/etc/mailname' file exists
+  copy:
+    content: "{{ __hostname_fqdn }}"
+    dest: /etc/mailname
+    force: no
+    group: root
+    owner: root
+    mode: 0644

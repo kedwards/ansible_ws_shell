@@ -1,0 +1,18 @@
+---
+- import_tasks: arch/vpc.yml
+
+- import_tasks: arch/igw.yml
+
+- import_tasks: arch/subnet.yml
+
+- import_tasks: arch/security.yml
+
+- import_tasks: arch/nacl.yml
+
+- import_tasks: arch/eni.yml
+
+- import_tasks: arch/eip.yml
+
+- import_tasks: arch/nat.yml
+
+- import_tasks: arch/route.yml

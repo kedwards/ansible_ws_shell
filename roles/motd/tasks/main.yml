@@ -1,0 +1,14 @@
+---
+- import_tasks: apt/init.yml
+
+- import_tasks: motd/header.yml
+
+- import_tasks: motd/sysinfo.yml
+
+- import_tasks: motd/updates.yml
+
+- import_tasks: motd/custom.yml
+
+- import_tasks: motd/footer.yml
+
+- import_tasks: link/link.yml

@@ -1,0 +1,19 @@
+---
+- name: Provision Subnet
+  no_log: true
+  ec2_vpc_subnet:
+    state: present
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    cidr: "{{ item.cidr }}"
+    az: "{{ __vpc_az1 }}"
+    region: "{{ __vpc_region }}"
+    map_public: "{{ item.map_ip }}"
+    tags:
+      Name: "{{ item.name }}"
+      Service: ec2_vpc_subnet
+      Environment: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+  with_items: "{{ __vpc_subnets }}"
+  register: my_ec2_vpc_subnet

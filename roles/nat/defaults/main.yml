@@ -1,0 +1,12 @@
+---
+__nat_default_apt_packages:
+  - make
+  - git
+  - python-setuptools
+  - gcc
+  - python-dev
+  - libffi-dev
+  - libssl-dev
+  - python-packaging
+  - libyaml-dev
+  - iptables-persistent

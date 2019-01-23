@@ -1,0 +1,104 @@
+ab_logon_database: endur
+service_password: Op3nl1nk
+
+versions:
+  1067: V14_0_08082015MR_08212015_1067
+  1081: V14_0_08082015ENB_12212015_1081 
+  1115: v14_0_08082015ENBR_03162017_1115
+
+# START TYPE     LOADER     MEANING
+#  0x0            Kernel     Represents a part of the 
+#  (Boot)                    driver stack for the boot
+#                            (startup) volume and must
+#                            therefore be loaded by the
+#                            Boot Loader.
+# 
+#  0x1            I/O        Represents a driver to be loaded
+#  (System)       subsystem  at Kernel initialization.
+# 
+#  0x2            Service    To be loaded or started
+#  (Auto load)    Control    automatically for all startups,
+#                 Manager    regardless of service type.
+# 
+#  0x3            Service    Available, regardless of type,
+#  (Load on       Control    but will not be started until
+#  demand)        Manager    the user starts it (for example,
+#                            by using the Devices icon in
+#                            Control Panel).
+# 
+#  0x4            Service    NOT TO BE STARTED UNDER ANY
+#  (disabled)     Control    CONDITIONS.
+#                 Manager 
+startup_types:
+  boot: 0x0
+  sysytem: 0x1
+  automatic: 0x2
+  manual: 0x3
+  disabled: 0x4
+
+start_mode:
+  auto: 'auto'
+  manual: 'manual'
+  disabled: 'disabled'
+  delayed: 'delayed'
+  
+# ErrorControl     REG_DWORD     Error constant
+#
+# Specifies the level of error control for the service as follows:
+# 
+# Error Control  Meaning
+# Level
+# 
+# 0x3 (Critical) Fail the attempted system startup.
+#                If the startup is not using the
+#                LastKnownGood control set, switch to
+#                LastKnownGood. If the startup attempt
+#                is using LastKnownGood, run a bug-check
+#                routine.
+# 
+# 0x2 (Severe)   If the startup is not using the
+#                LastKnownGood control set, switch to
+#                LastKnownGood. If the startup attempt
+#                is using LastKnownGood, continue on
+#                in case of error.
+# 
+# 0x1 (Normal)   If the driver fails to load or initialize,
+#                startup should proceed, but display a
+#                warning.
+# 
+# 0x0 (Ignore)   If the driver fails to load or initialize,
+#                start up proceeds. No warning is displayed.
+error_control:
+  critical: 0x3
+  severe: 0x2
+  normal: 0x1
+  ignore: 0x0
+  
+
+# Type     REG_DWORD     Type constant
+# 
+# Specifies the type of service as follows:
+# 
+# Service Type   Description
+# 
+# 0x1            A Kernel device driver.
+# 
+# 0x2            File system driver, which is also
+#                a Kernel device driver.
+# 
+# 0x4            A set of arguments for an adapter.
+# 
+# 0x10           A Win32 program that can be started
+#                by the Service Controller and that
+#                obeys the service control protocol.
+#                This type of Win32 service runs in
+#                a process by itself.
+# 
+# 0x20           A Win32 service that can share a process
+#                with other Win32 services.
+ 
+service_types:
+  kernel: 0x0
+  adapter: 0x4
+  win32: 0x10
+  win32_shared: 0x20

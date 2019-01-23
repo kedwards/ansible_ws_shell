@@ -1,0 +1,144 @@
+---
+__vpc_my_ip_cidr: "{{ vpc_my_ip_cidr }}"
+
+__vpc_tag_env: "{{ vpc_tag_env | default('dev') }}"
+__vpc_tag_owner: "{{ vpc_tag_owner | default('kedwards') }}"
+__vpc_region: "{{ vpc_region | default('ca-central-1') }}"
+
+__vpc_ami_id: "{{ vpc_ami_id | default('ami-02c86bb8afb45cdeb') }}"
+__vpc_keypair_name: "{{ vpc_keypair_name | default('kedwards_keca') }}"
+
+__vpc_name: "{{ vpc_name | default('ca_vpc_sys_prd') }}"
+
+__vpc_public_cidr: "{{ vpc_public_cidr | default('0.0.0.0/0')}}"
+__vpc_cidr: "{{ vpc_cidr | default('10.0.0.0/16') }}"
+__vpc_subnet_public_cidr: "{{ vpc_subnet_public_cidr | default('10.0.0.0/24') }}"
+__vpc_subnet_private_cidr: "{{ vpc_subnet_private_cidr | default('10.0.1.0/24') }}"
+
+__vpc_igw_name: "{{ vpc_igw_name | default('ca_igw_sys_prd') }}"
+__vpc_subnet_public_name: "{{ subnet_public_name | default('ca_sub_sys_prd_public') }}"
+__vpc_subnet_private_name: "{{ subnet_private_name | default('ca_sub_sys_prd_private') }}"
+
+__vpc_az1: "{{ __vpc_region }}a"
+__vpc_az2: "{{ __vpc_region }}b"
+
+__vpc_security_group_bastion_name: "{{ vpc_security_group_bastion_name | default('ca_sgp_sys_prd_bastion') }}"
+__vpc_security_group_nat_name: "{{ vpc_security_group_nat_name | default('ca_sgp_sys_prd_nat') }}"
+__vpc_security_group_database_name: "{{ vpc_security_group_database_name | default('ca_sgp_sys_prd_database') }}"
+
+__vpc_security_group_bastion_descr: "{{ vpc_security_group_bastion_descr | default('Security group for bastion servers') }}"
+__vpc_security_group_nat_descr: "{{ vpc_security_group_nat_descr | default('Security group for nat servers') }}"
+__vpc_security_group_database_descr: "{{ vpc_security_group_database_descr | default('Security group for database servers') }}"
+
+__vpc_nacl_private_name: "{{ vpc_nacl_private_name | default('ca_acl_sys_prd_private') }}"
+__vpc_nacl_public_name: "{{ vpc_nacl_public_name | default('ca_acl_sys_prd_public') }}"
+
+__vpc_eni_descr: "{{ vpc_eni_descr | default('ENI for Nat') }}"
+__vpc_eni_name: "{{ vpc_eni_name | default('ca_eni_sys_prd_nat') }}"
+__vpc_eip_name: "{{ vpc_eip_name | default('ca_eip_sys_prd_nat') }}"
+__vpc_eni_private_ip_address: "{{ vpc_eni_private_ip_address | default('10.0.0.111') }}"
+
+__vpc_ec2_nat_name: "{{ vpc_ec2_nat_name | default('ca_ec2_sys_prd_nat') }}"
+__vpc_ec2_nat_instance_type: "{{ vpc_ec2_nat_instance_type | default('t2.micro') }}"
+
+__vpc_rtb_public_name: "{{ vpc_rtb_public_name | default('ca_rtb_sys_prd_public') }}"
+__vpc_rtb_private_name: "{{ vpc_rtb_private_name | default('ca_rtb_sys_prd_private') }}"
+
+__vpc_subnets:
+  - name: "{{ __vpc_subnet_public_name }}"
+    cidr: "{{ __vpc_subnet_public_cidr }}"
+    map_ip: true
+  - name: "{{ __vpc_subnet_private_name }}"
+    cidr: "{{ __vpc_subnet_private_cidr }}"
+    map_ip: true
+
+__vpc_security_groups:
+  - name: "{{ __vpc_security_group_bastion_name }}"
+    description: "{{ __vpc_security_group_bastion_descr }}"
+    region: "{{ __vpc_region }}"
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: "{{ __vpc_my_ip_cidr }}"
+    rules_egress:
+      - proto: -1
+        cidr_ip: "{{ __vpc_public_cidr }}"
+  - name: "{{ __vpc_security_group_database_name }}"
+    description: "{{ __vpc_security_group_database_descr }}"
+    region: "{{ __vpc_region }}"
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: "{{ __vpc_subnet_public_cidr }}"
+    rules_egress:
+      - proto: -1
+        cidr_ip: "{{ __vpc_public_cidr }}"
+  - name: "{{ __vpc_security_group_nat_name }}"
+    description: "{{ __vpc_security_group_nat_descr }}"
+    region: "{{ __vpc_region }}"
+    rules:
+      - proto: -1
+        cidr_ip: "{{ __vpc_subnet_private_cidr }}"
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: "{{ __vpc_public_cidr }}"
+    rules_egress:
+      - proto: -1
+        cidr_ip: "{{ __vpc_public_cidr }}"
+
+__vpc_nacls:
+  - name: "{{ __vpc_nacl_private_name }}"
+    subnets:  "{{ my_ec2_vpc_subnet.results.1.subnet.id }}"
+    ingress: "{{ __vpc_nacl_private_ingress }}"
+    egress: "{{ __vpc_nacl_private_egress}}"
+  - name: "{{ __vpc_nacl_public_name }}"
+    subnets:  "{{ my_ec2_vpc_subnet.results.0.subnet.id }}"
+    ingress: "{{ __vpc_nacl_public_ingress }}"
+    egress: "{{ __vpc_nacl_public_egress}}"
+
+__vpc_nacl_public_ingress: [
+  # rule no, protocol, allow/deny, cidr, icmp_code, icmp_type, port from, port to
+  [100, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 80, 80],
+  [150, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 443, 443],
+  [200, tcp, allow, "{{ __vpc_my_ip_cidr }}", null, null, 22, 22],
+  [250, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 1024, 65535]
+]
+
+__vpc_nacl_public_egress: [
+  # rule no, protocol, allow/deny, cidr, icmp_code, icmp_type, port from, port to
+  [100, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 80, 80],
+  [150, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 443, 443],
+  [200, tcp, allow, "{{ __vpc_subnet_private_cidr }}", null, null, 22, 22],
+  [250, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 1024, 65535]
+]
+
+__vpc_nacl_private_ingress: [
+  # rule no, protocol, allow/deny, cidr, icmp_code, icmp_type, port from, port to
+  [100, tcp, allow, "{{ __vpc_subnet_public_cidr }}", null, null, 22, 22],
+  [150, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 1024, 65535]
+]
+
+__vpc_nacl_private_egress: [
+  # rule no, protocol, allow/deny, cidr, icmp_code, icmp_type, port from, port to
+  [100, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 80, 80],
+  [150, tcp, allow, "{{ __vpc_public_cidr }}", null, null, 443, 443],
+  [200, tcp, allow, "{{ __vpc_subnet_private_cidr }}", null, null, 22, 22],
+  [250, tcp, allow, "{{ __vpc_subnet_public_cidr }}", null, null, 1024, 65535]
+]
+
+__vpc_routes:
+  - name: "{{ __vpc_rtb_public_name }}"
+    subnets: "{{ my_ec2_vpc_subnet.results.0.subnet.id }}"
+    routes:
+      - dest: "{{ __vpc_public_cidr }}"
+        type: gateway
+        gateway_id: "{{ my_ec2_vpc_igw.gateway_id }}"
+  - name: "{{ __vpc_rtb_private_name }}"
+    subnets: "{{ my_ec2_vpc_subnet.results.1.subnet.id }}"
+    routes:
+      - dest: "{{ __vpc_public_cidr }}"
+        type: instance
+        instance_id: "{{ my_nat_ec2.tagged_instances.0.id }}"

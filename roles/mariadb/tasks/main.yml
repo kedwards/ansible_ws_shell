@@ -1,0 +1,14 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- debug:
+    msg: "Dist: {{ ansible_distribution }}, and OS Family: {{ ansible_os_family }}"
+# - include: chkvars.yml
+# - include: install.yml
+# - include: config.yml
+# - include: password.yml
+# - include: databases.yml
+# - include: users.yml

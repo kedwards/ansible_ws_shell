@@ -1,0 +1,8 @@
+---
+- name: check or create 00-header MOTD file
+  copy:
+    src: 00-header.motd.sh
+    dest: /etc/update-motd.d/00-header
+    owner: root
+    group: root
+    mode: "u+rwx,g-rwx,o+rw"

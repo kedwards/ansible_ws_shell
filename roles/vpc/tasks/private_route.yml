@@ -1,0 +1,204 @@
+---
+- name: create Public Route Table
+  ec2_vpc_route_table:
+    vpc_id: "{{ my_vpc.vpc.id }}"
+    region: "{{ aws_region }}"
+    subnets: "{{ item.subnet_id }}"
+    routes:
+      - dest: "{{ public_cidr }}"
+        gateway_id: "{{ my_vpc_igw.gateway_id }}"
+    tags:
+      Name: "{{ item.name }}"
+      VPC:  "{{ vpc_name }}"
+      Environment: "{{ aws_env }}"
+      Owner: "{{ vpc_owner_name }}"
+  with_items: "{{ public_routes }}"
+  register: my_public_route_table
+
+- name: create Private Route Table
+  when:
+    - vpc_instance_vs_gateway == true
+  ec2_vpc_route_table:
+    vpc_id: "{{ my_vpc.vpc.id }}"
+    region: "{{ aws_region }}"
+    tags:
+      Name: "{{ item.name }}"
+      VPC:  "{{ vpc_name }}"
+      Environment: "{{ aws_env }}"
+      Owner: "{{ vpc_owner_name }}"
+    subnets: "{{ item.subnet_id }}"
+    routes:
+      - dest: "{{ public_cidr }}"
+        instance_id: "{{ my_az1_nat.tagged_instances.0.id }}"
+
+#   - name: create Public Route Table
+#   ec2_vpc_route_table:
+#     vpc_id: "{{ my_vpc.vpc.id }}"
+#     region: "{{ aws_region }}"
+#     subnets: "{{ my_public_subnet_az1.subnet.id }}"
+#     routes:
+#       - dest: "{{ public_cidr }}"
+#         gateway_id: "{{ my_vpc_igw.gateway_id }}"
+#     tags:
+#       Name: "{{ aws_env }}_public_route_table"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#   register: my_public_route_table
+#
+# - name: create Public Route Table
+#   when: aws_multi_az == true
+#   ec2_vpc_route_table:
+#     vpc_id: "{{ my_vpc.vpc.id }}"
+#     region: "{{ aws_region }}"
+#     subnets: [ "{{ my_public_subnet_az1.subnet.id }}", "{{ my_public_subnet_az2.subnet.id }}" ]
+#     routes:
+#       - dest: "{{ public_cidr }}"
+#         gateway_id: "{{ my_vpc_igw.gateway_id }}"
+#     tags:
+#       Name: "{{ aws_env }}_public_route_table"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#   register: my_public_route_table
+#
+# - name: create Elastic Network Interface
+#   ec2_eni:
+#     state: present
+#     description: "ENI for Nat"
+#     region: "{{ aws_region }}"
+#     security_groups: "{{ my_private_sg.group_id }}"
+#     subnet_id: "{{ my_private_subnet_az1.subnet.id }}"
+#   register: my_vpc_eni
+#
+# - name: Disable source/dest check
+#   ec2_eni:
+#     eni_id: "{{ my_vpc_eni.interface.id }}"
+#     region: "{{ aws_region }}"
+#     source_dest_check: false
+#
+# - name: allocate and attach Elastic IP to ENI
+#   ec2_eip:
+#     state: present
+#     reuse_existing_ip_allowed: yes
+#     allow_reassociation: yes
+#     device_id: "{{ my_vpc_eni.interface.id }}"
+#     region: "{{ aws_region }}"
+#     in_vpc: yes
+#   register: my_vpc_eip
+#
+# - name: create AZ1 Nat Instance
+#   when: vpc_instance_vs_gateway == true
+#   ec2:
+#     image: "{{ vpc_nat_instance_id }}"
+#     instance_type: "{{ vpc_nat_instance_type }}"
+#     key_name: "{{ ec2_keypair_name }}"
+#     region: "{{ aws_region }}"
+#     zone: "{{ aws_az1 }}"
+#     network_interfaces: my_vpc_eip.interfacee.id
+# #    vpc_subnet_id: "{{ my_public_subnet_az1.subnet.id }}"
+#     id: "{{ aws_env }}_natty"
+#     source_dest_check: no
+#     exact_count: 1
+#     wait: yes
+# #    group_id: "{{ my_public_sg.group_id }}"
+#     instance_tags:
+#       Name: "{{ aws_env }}_natty"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#     count_tag:
+#       Name: "{{ aws_env }}_nat"
+#   register: my_az1_nat
+#
+# - name: create AZ2 Nat Instance
+#   when:
+#     - vpc_instance_vs_gateway == true
+#     - aws_multi_az == true
+#   ec2:
+#     image: "{{ vpc_nat_instance_id }}"
+#     instance_type: "{{ vpc_nat_instance_type }}"
+#     assign_public_ip: true
+#     key_name: "{{ ec2_keypair_name }}"
+#     region: "{{ aws_region }}"
+#     zone: "{{ aws_az2 }}"
+#     vpc_subnet_id: "{{ my_public_subnet_az2.subnet.id }}"
+#     id: "{{ aws_env }}_az2_nat"
+#     source_dest_check: no
+#     exact_count: 1
+#     wait: yes
+#     group_id: "{{ my_public_sg.group_id }}"
+#     instance_tags:
+#       Name: "{{ aws_env }}_az2_nat"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#     count_tag:
+#       Name: "{{ aws_env }}_az2_nat"
+#   register: my_az2_nat
+#
+# - name: create AZ1 Private Route Table
+#   when:
+#     - vpc_instance_vs_gateway == true
+#   ec2_vpc_route_table:
+#     vpc_id: "{{ my_vpc.vpc.id }}"
+#     region: "{{ aws_region }}"
+#     tags:
+#       Name: "{{ aws_env }}_az1_private_route_table"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#     subnets: "{{ my_private_subnet_az1.subnet.id }}"
+#     routes:
+#       - dest: "{{ public_cidr }}"
+#         instance_id: "{{ my_az1_nat.tagged_instances.0.id }}"
+#
+# - name: create AZ1 Private Route Table
+#   when:
+#     - vpc_instance_vs_gateway == false
+#   ec2_vpc_route_table:
+#     vpc_id: "{{ my_vpc.vpc.id }}"
+#     region: "{{ aws_region }}"
+#     tags:
+#       Name: "{{ aws_env }}_az1_private_route_table"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#     subnets: "{{ my_private_subnet_az1.subnet.id }}"
+#     routes:
+#       - dest: "{{ public_cidr }}"
+#         instance_id: "{{ my_nat_gateway_az1.nat_gateway_id }}"
+#
+# - name: create AZ2 Private Route Table
+#   when:
+#     - vpc_instance_vs_gateway == true
+#     - aws_multi_az == true
+#   ec2_vpc_route_table:
+#     vpc_id: "{{ my_vpc.vpc.id }}"
+#     region: "{{ aws_region }}"
+#     tags:
+#       Name: "{{ aws_env }}_az1_private_route_table"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#     subnets: "{{ my_private_subnet_az2.subnet.id }}"
+#     routes:
+#       - dest: "{{ public_cidr }}"
+#         instance_id: "{{ my_az2_nat.tagged_instances.0.id }}"
+#
+# - name: create AZ2 Private Route Table
+#   when:
+#     - vpc_instance_vs_gateway == false
+#     - aws_multi_az == true
+#   ec2_vpc_route_table:
+#     vpc_id: "{{ my_vpc.vpc.id }}"
+#     region: "{{ aws_region }}"
+#     tags:
+#       Name: "{{ aws_env }}_az2_private_route_table"
+#       VPC:  "{{ vpc_name }}"
+#       Environment: "{{ aws_env }}"
+#       Owner: "{{ vpc_owner_name }}"
+#     subnets: "{{ my_private_subnet_az2.subnet.id }}"
+#     routes:
+#       - dest: "{{ public_cidr }}"
+#         instance_id: "{{ my_nat_gateway_az2.nat_gateway_id }}"

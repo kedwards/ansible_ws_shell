@@ -1,0 +1,19 @@
+---
+- name: Create create and associate ACL to subnet.
+  no_log: true
+  ec2_vpc_nacl:
+    state: present
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    name: "{{ item.name }}"
+    subnets: "{{ item.subnets }}"
+    ingress: "{{ item.ingress }}"
+    egress: "{{ item.egress }}"
+    tags:
+      Name: "{{ item.name }}"
+      Service: ec2_vpc_nacl
+      Env: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+  with_items: "{{ __vpc_nacls }}"
+  register: my_ec2_vpc_nacl

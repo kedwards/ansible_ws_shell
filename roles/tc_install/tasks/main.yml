@@ -1,0 +1,38 @@
+---
+# tasks file for roles/tc
+- name: Verify if {{ product_id }} is installed
+  win_stat:
+    path: '{{ install_path }}\{{ product_exe }}'
+  register: tc_installed
+
+- name: Create automation directory
+  win_file:
+    path: '{{ automation_path }}'
+    state: directory
+
+- name: Download {{ product_id }} Installer
+  win_get_url:
+    url: '{{ file_repository }}/{{ item }}'
+    dest: '{{ automation_path }}\{{ item }}'
+    force: no
+  with_items:
+    - '{{ product_zip }}'
+    - '{{ product_ps1 }}'
+  when:
+    - not tc_installed.stat.exists
+
+- name: Unzip {{ product_id }}
+  win_unzip:
+    src: '{{ automation_path }}\{{ product_zip }}'
+    dest: '{{ automation_path }}'
+    creates: '{{ automation_path }}\{{ product_path }}\{{ install_exe }}'
+  when:
+    - not tc_installed.stat.exists
+    
+- name: Install {{ product_id }}
+  win_shell: '{{ automation_path }}\{{ product_ps1 }}'
+  args:
+    chdir: '{{ automation_path }}'
+    creates: '{{ install_path }}\{{ product_exe }}'
+  when: 
+    - not tc_installed.stat.exists

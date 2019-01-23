@@ -1,0 +1,37 @@
+---
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_rtb_public_name }}" }
+    - { key: Service, value: ec2_vpc_route_table }
+
+- name: create Route Table
+  ec2_vpc_route_table:
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    region: "{{ vpc_region }}"
+    subnets:
+      - "{{ my_ec2_vpc_subnet.results.0.subnet.id }}"
+    routes:
+      - dest: "{{ vpc_public_cidr }}"
+        gateway_id: "{{ my_ec2_vpc_igw.gateway_id }}"
+    tags: "{{ merged_tags }}"
+  register: my_public_ec2_vpc_route_table
+
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_rtb_private_name }}" }
+    - { key: Service, value: ec2_vpc_route_table }
+
+- name: create Route Table
+  ec2_vpc_route_table:
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    region: "{{ vpc_region }}"
+    subnets: "{{ my_ec2_vpc_subnet.results.1.subnet.id }}"
+    routes:
+      - dest: "{{ vpc_public_cidr }}"
+        instance_id: "{{ my_nat_ec2.tagged_instances.0.id }}"
+    tags: "{{ merged_tags }}"
+  register: my_private_ec2_vpc_route_table

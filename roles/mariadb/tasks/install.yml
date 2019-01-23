@@ -1,0 +1,26 @@
+---
+- name: Add an apt key by id from a keyserver
+  become: yes
+  apt_key:
+    state: present
+    data: "{{ mariadb_public_key }} "
+#    keyserver: keyserver.ubuntu.com
+#    id: 28E73359562C9775BDD7F3E9DB7ADA85
+#    keyring: /etc/apt/trusted.gpg.d/mariadb.gpg
+
+- name: Add MariaDB repository into sources list
+  become: yes
+  apt_repository:
+    state: present
+    codename: stretch
+    filename: mariadb
+    update_cache: yes
+    repo: deb http://mariadb.mirror.anstey.ca/repo/10.3/debian stretch main
+
+- name: Update the repository cache and update package "mariadb-server" to latest version
+  become: yes
+  apt:
+    name: mariadb-server
+    state: latest
+    default_release: stretch
+    update_cache: yes

@@ -1,0 +1,4 @@
+---
+__hostname_host: "{{ hostname_host }}"
+__hostname_domain: "{{ hostname_domain | default('kevinedwards.ca') }}"
+__hostname_fqdn: "{{ __hostname_host }}.{{ __hostname_domain }}"

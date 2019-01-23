@@ -1,0 +1,29 @@
+---
+- name: restart nginx
+  debug: msg="checking config first"
+  changed_when: true
+  notify:
+    - check nginx configuration
+    - restart nginx service - after config check
+
+- name: reload nginx
+  debug: msg="checking config first"
+  changed_when: true
+  notify:
+    - check nginx configuration
+    - reload nginx service - after config check
+
+- name: restart nginx service - after config check
+  systemd:
+    state: restarted
+    daemon_reload: yes
+
+- name: reload nginx service - after config check
+  systemd:
+    name: nginx
+    state: reloaded
+
+- name: check nginx configuration
+  command: "{{ __nginx_binary_name }} -t -c {{ __nginx_conf_dir }}/nginx.conf"
+  register: result
+  changed_when: "result.rc != 0"

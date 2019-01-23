@@ -1,0 +1,60 @@
+---
+openlink_build_id: V14_0_08082015ENB_12212015_1081
+openlink_build_number: 14
+openlink_root: 'D:/ansible_build/v{{ openlink_build_number }}/{{ openlink_build_id }}'
+
+openlink_binaries_source: "files/binaries"
+openlink_zips_source: "files/zips"
+
+openlink_32bit_root: '{{ openlink_root }}/32bit_Binaries'
+openlink_32bit_unzip: '{{ openlink_32bit_root }}/UnzippedFolders'
+openlink_32bit_zip: '{{ openlink_32bit_root }}/_ZIPs'
+openlink_32bit_complete_bin: '{{ openlink_32bit_root }}/_CompleteBIN'
+
+openlink_64bit_root: '{{ openlink_root }}/64bit_Binaries'
+openlink_64bit_unzip: '{{ openlink_64bit_root }}/UnzippedFolders'
+openlink_64bit_zip: '{{ openlink_64bit_root }}/_ZIPs'
+openlink_64bit_complete_bin: '{{ openlink_64bit_root }}/_CompleteBIN'
+
+openlink_complete_build: '{{ openlink_root }}/CompleteBuild'
+openlink_32bit_complete_build: '{{ openlink_complete_build }}/bin'
+openlink_64bit_complete_build: '{{ openlink_complete_build }}/bin.win64'
+
+openlink_32bit_binaries: V14_0_08082015ENB_12212015_BUILD_1081_MSWin32
+openlink_64bit_binaries: V14_0_08082015ENB_12212015_BUILD_1081_MSWinX64
+
+openlink_shell_template:
+  - '{{ openlink_root }}'
+  - '{{ openlink_32bit_root }}'
+  - '{{ openlink_64bit_root }}'
+  - '{{ openlink_32bit_unzip }}'
+  - '{{ openlink_64bit_unzip }}'
+  - '{{ openlink_32bit_zip }}'
+  - '{{ openlink_64bit_zip}}'
+  - '{{ openlink_32bit_complete_bin }}'
+  - '{{ openlink_64bit_complete_bin }}'
+  - '{{ openlink_32bit_complete_build }}'
+  - '{{ openlink_64bit_complete_build }}'
+
+openlink_32bit_zip_files:
+  - CONNEXWEBSERVICE_V14_0_08082015ENB_12212015_BUILD_1081_MSWin32
+  - ICE_OTC_FUT_GATEWAY_2_0_0_1208_30JUL2015_MSWin32
+  - ICECM_GATEWAY_0_1_2_1163_30JUL2015_MSWin32
+  - NET_TOOLKIT_V14_0_08082015ENB_12212015_BUILD_1081_MSWin32
+  - QTP_V14_0_08082015ENB_12212015_BUILD_1081_MSWin32
+  - RISKPAK_2015_2_1_127_14JUL2015_V10_to_V15_V14_0_MSWin32
+  - SCRIPTS_gMotion_Off_JVS_V14_0_08082015ENB_12212015_BUILD_1081_MSWin32
+  - STANDARD_PLUGINS_V14_0_08082015ENB_12212015_BUILD_1081_MSWin32
+  - TREASURY_DASHBOARD_2_1_0_1079_07APR2015_V2_1_MSWin32
+  - WSGATEWAY_V14_0_08082015ENB_12212015_BUILD_1081_MSWin32
+
+openlink_64bit_zip_files:
+  - CONNEXWEBSERVICE_V14_0_08082015ENB_12212015_BUILD_1081_MSWinX64
+  - ICE_OTC_FUT_GATEWAY_2_0_0_1208_30JUL2015_MSWinX64
+  - ICECM_GATEWAY_0_1_2_1163_30JUL2015_MSWinX64
+  - NET_TOOLKIT_V14_0_08082015ENB_12212015_BUILD_1081_MSWinX64
+  - QTP_V14_0_08082015ENB_12212015_BUILD_1081_MSWinX64
+  - SCRIPTS_gMotion_Off_JVS_V14_0_08082015ENB_12212015_BUILD_1081_MSWinX64
+  - STANDARD_PLUGINS_V14_0_08082015ENB_12212015_BUILD_1081_MSWinX64
+  - TREASURY_DASHBOARD_2_1_0_1079_07APR2015_V2_1_MSWinX64
+  - WSGATEWAY_V14_0_08082015ENB_12212015_BUILD_1081_MSWinX64

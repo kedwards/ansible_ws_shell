@@ -1,0 +1,37 @@
+---
+- name: Load required variable file for the db selected
+  include_vars: "{{ db }}.yml"
+
+- name: Test DB Configuration
+  debug:
+    msg: "Executing on database {{ database.hostname }}"
+
+- name: Drop db links
+  oracle_sql:
+    hostname: "{{ database.hostname }}"
+    user: "{{ database.user }}"
+    password: "{{ database.password }}"
+    service_name: "{{ database.service_name }}"
+    port: "{{ database.port }}"
+    sql: 'drop public database link {{ item.value.name }}'
+  no_log: '{{ do_log }}'
+  with_dict: '{{ dblinks }}'
+  tags:
+    - drop
+
+- name: Create db links
+  oracle_sql:
+    hostname: "{{ database.hostname }}"
+    user: "{{ database.user }}"
+    password: "{{ database.password }}"
+    service_name: "{{ database.service_name }}"
+    port: "{{ database.port }}"
+    sql: >
+      create public database link {{ item.value.name }}
+      connect to {{ item.value.user }}
+      identified by {{ item.value.pass}}
+      using '{{ item.value.tns }}'
+  no_log: '{{ do_log }}'
+  with_dict: '{{ dblinks }}'
+  tags:
+    - create

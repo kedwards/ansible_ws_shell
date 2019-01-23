@@ -1,0 +1,7 @@
+---
+database:
+  hostname: olddly01.cnpl.enbridge.com
+  user: endur
+  password: '{{ endur_pprod_pass | vault }}'
+  service_name: olddly01
+  port: 62001

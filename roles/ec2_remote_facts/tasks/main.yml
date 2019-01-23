@@ -1,0 +1,19 @@
+---
+# tasks file for roles/ec2_remote_facts
+- name: Gather EC2 facts.
+  ec2_remote_facts:
+    region: "{{ aws_region }}"
+  register: aws_ec2_facts
+
+- name: Get only running instance IP addresses.
+  vars: 
+    msg: |
+      Region: {{ item.2 }}
+      Instance: {{ item.0 }}
+      IP address: {{ item.1 }}
+  debug:
+     msg: "{{ aws_ec2_facts }}"
+  with_together:
+    - "{{ aws_ec2_facts.instances|selectattr('state', 'equalto', 'running')|map(attribute='tags.Name')|list }}"
+    - "{{ aws_ec2_facts.instances|selectattr('state', 'equalto', 'running')|map(attribute='private_ip_address')|list }}"
+    - "{{ aws_region }}"

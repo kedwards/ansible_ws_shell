@@ -1,0 +1,7 @@
+---
+- include: chkvars.yml
+- include: install.yml
+- include: host.yml
+- include: aws.yml
+- include: dropbox.yml
+- include: cleanup.yml

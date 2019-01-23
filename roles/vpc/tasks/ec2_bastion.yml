@@ -1,0 +1,30 @@
+---
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_ec2_bastion_name }}" }
+    - { key: Service, value: ec2 }
+
+- name: create EC2 Instance
+  ec2:
+    image: "{{ vpc_ec2_image_id }}"
+    instance_type: "{{ vpc_ec2_instance_type }}"
+    key_name: "{{ vpc_ec2_keypair_name }}"
+    region: "{{ vpc_region }}"
+    vpc_subnet_id: "{{ my_ec2_vpc_subnet.results.0.subnet.id }}"
+    zone: "{{ vpc_az1 }}"
+    assign_public_ip : yes
+    id: "{{ vpc_ec2_bastion_name }}"
+    group: "{{ vpc_sgp_bastion_name }}"
+    exact_count: 1
+    wait: yes
+    instance_tags: "{{ merged_tags }}"
+    count_tag:
+      Name: "{{ vpc_ec2_bastion_name }}"
+  register: my_bastion_ec2
+
+- name: Add the newly created host so that we can further contact it
+  add_host:
+    name: "{{ my_bastion_ec2.tagged_instances.0.public_ip }}"
+    groups: bastions

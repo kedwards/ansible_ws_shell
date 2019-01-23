@@ -1,0 +1,51 @@
+---
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_sgp_bastion_name }}" }
+    - { key: Service, value: ec2_group }
+
+- name: create Security Group
+  ec2_group:
+    name: "{{ vpc_sgp_bastion_name }}"
+    description: "Bastion Security Group"
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    rules: "{{ vpc_rules_bastion }}"
+    rules_egress: "{{ vpc_rules_egress_bastion }}"
+    tags: "{{ merged_tags }}"
+  register: my_bastion_ec2_group
+
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_sgp_db_name }}" }
+    - { key: Service, value: ec2_group }
+
+- name: create Security Group
+  ec2_group:
+    name: "{{ vpc_sgp_db_name }}"
+    description: "Database Security Group"
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    rules: "{{ vpc_rules_db }}"
+    rules_egress: "{{ vpc_rules_db_egress }}"
+    tags: "{{ merged_tags }}"
+  register: my_db_ec2_group
+
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ vpc_sgp_nat_name }}" }
+    - { key: Service, value: ec2_group }
+
+- name: create Security Group
+  ec2_group:
+    name: "{{ vpc_sgp_nat_name }}"
+    description: "Nat Security Group"
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    rules: "{{ vpc_rules_nat }}"
+    rules_egress: "{{ vpc_rules_nat_egress }}"
+    tags: "{{ merged_tags }}"
+  register: my_nat_ec2_group

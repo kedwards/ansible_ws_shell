@@ -1,0 +1,20 @@
+---
+# defaults file for roles/tc
+arch: "{{ ansible_architecture | regex_replace('-', '_')}}"
+install_state: present
+file_repository: http://vpwv0314ap03d.cnpl.enbridge.com
+
+
+vendor: Openlink
+name: Total Commander
+build_id: 8.01
+
+install_path: 'C:\Program Files\totalcmd'
+install_exe: install64.exe
+automation_path: D:\automation
+
+product_id: '{{ name }} {{ build_id }}'
+product_exe: totalcmd64.exe
+product_path: tcm801x32_64
+product_ps1: tc_install.ps1
+product_zip: tcm801x32_64.zip

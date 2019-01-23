@@ -1,0 +1,27 @@
+---
+- name: Create nat instance
+  ec2:
+    image: "{{ __vpc_ami_id }}"
+    instance_type: "{{ __vpc_ec2_nat_instance_type }}"
+    key_name: "{{ __vpc_keypair_name }}"
+    region: "{{ __vpc_region }}"
+    zone: "{{ __vpc_az1 }}"
+    network_interfaces: "{{ my_ec2_eni.interface.id }}"
+    id: "{{ __vpc_ec2_nat_name }}"
+    source_dest_check: no
+    exact_count: 1
+    wait: yes
+    instance_tags:
+      Name: "{{ __vpc_ec2_nat_name }}"
+      Service: ec2
+      Env: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+    count_tag:
+      Name: "{{ __vpc_ec2_nat_name }}"
+  register: my_nat_ec2
+
+- name: Save nat host in facts
+  set_fact:
+    __vpc_nat_host: "{{ my_nat_ec2.tagged_instances.0.tags.Name }}"

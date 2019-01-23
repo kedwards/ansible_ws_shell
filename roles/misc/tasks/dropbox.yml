@@ -1,0 +1,33 @@
+---
+- name: download Dropbox-CLI
+  get_url:
+    url: "{{ ec2_common_dropbox_url }}"
+    dest: "{{ ec2_common_dropbox_dest }}"
+    owner: admin
+    group: admin
+    mode: a+x
+
+- stat:
+    path: /home/admin/.dropbox-dist/VERSION
+  register: dropbox_setup
+
+- name: download Dropbox Setup
+  get_url:
+    url: "{{ ec2_common_dropbox_setup_url }}"
+    dest: "{{ ec2_common_dropbox_setup_dest }}"
+    owner: admin
+    group: admin
+  when: dropbox_setup.stat.exists == false
+
+- name: unpack Dropbox Setup
+  unarchive:
+    src: "{{ ec2_common_dropbox_setup_dest }}"
+    dest: /home/admin/
+    remote_src: yes
+  when: dropbox_setup.stat.exists == false
+
+- name: clean Dropbox Artifact Path
+  file:
+    state: absent
+    path: "{{ ec2_common_dropbox_setup_dest }}"
+  when: dropbox_setup.stat.exists == false

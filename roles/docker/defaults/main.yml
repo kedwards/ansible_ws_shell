@@ -1,0 +1,55 @@
+---
+__nginx_binary_name: "{{ nginx_binary_name | default('nginx') }}"
+
+__nginx_keep_only_specified: "{{ keep_only_specified | default(false) }}"
+
+__nginx_default_site_template: "{{ nginx_default_site_template | default('vhost.conf.j2') }}"
+__nginx_index_html_template: "{{ nginx_index_html_template | default('index.html.j2') }}"
+__nginx_index_php_template: "{{ nginx_index_php_template | default('index.php.j2') }}"
+
+__nginx_php_version_num: "{{ nginx_php_version_num | default('7.3') }}"
+
+__nginx_user: "{{ nginx_user | default('www-data') }}"
+__nginx_group: "{{ nginx_group | default('admin') }}"
+
+__nginx_conf_dir: "{{ nginx_conf_dir | default('/etc/nginx') }}"
+__nginx_log_dir: "{{ nginx_log_dir | default('/var/log/nginx') }}"
+
+__nginx_log_user: "{{ nginx_log_user | default('root') }}"
+__nginx_log_group: "{{ nginx_log_group | default('adm') }}"
+
+__nginx_file_perm: "{{ nginx_file_perm | default('0664') }}"
+__nginx_dir_perm: "{{ nginx_dir_perm | default('0775') }}"
+__nginx_log_perm: "{{ nginx_log_perm | default('0755') }}"
+
+__nginx_bin_user: "{{ nginx_bin_user | default(__nginx_user) }}"
+
+__nginx_vhost_path : "{{ nginx_vhost_path | default('/var/www/src') }}"
+
+__nginx_worker_processes: "{% if ansible_processor_vcpus is defined %}{{ ansible_processor_vcpus }}{% else %}auto{% endif %}"
+
+__nginx_error_log: "{{ nginx_error_log | default('/var/log/nginx/error.log warn') }}"
+__nginx_pidfile: "{{ nginx_pidfile | default('/var/run/nginx.pid') }}"
+
+__nginx_worker_connections: "{{ nginx_worker_connections | default('1024') }}"
+
+__nginx_access_log: "{{ nginx_access_log | default('/var/log/nginx/access.log main') }}"
+
+__nginx_sendfile: "{{ nginx_sendfile | default('on') }}"
+__nginx_keepalive_timeout: "{{ nginx_keepalive_timeout | default('65') }}"
+
+__nginx_log_format: |
+  '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for"'
+
+__nginx_auth_basic_files:
+   passwd:
+     - kedwards:$apr1$AGb/q.gr$1Qg71qKHRDWfwDNYH6uSF.
+
+__nginx_configs: {}
+__nginx_remove_sites: []
+__nginx_disabled_sites: []
+__nginx_sites: "{{ nginx_sites | default([]) }}"
+
+__nginx_apt_gpg_keys: "{{ nginx_apt_gpg_keys | default([])}}"

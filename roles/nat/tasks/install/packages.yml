@@ -1,0 +1,8 @@
+---
+- name: Install required packages
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: yes
+  vars:
+    packages: "{{ __nat_default_apt_packages }}"

@@ -1,0 +1,16 @@
+---
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+
+- name: Install required packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages: "{{ ec2_common_packages }}"
+
+- name: install Python modules
+  pip:
+    name: "{{ modules }}"
+  vars:
+    modules: "{{ ec2_common_python_modules }}"

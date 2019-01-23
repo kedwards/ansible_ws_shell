@@ -1,0 +1,30 @@
+---
+- ec2_vpc_subnet_facts:
+    filters:
+      "tag:Name": "{{ role_ec2_subnet_tag_name }}"
+  register: subnet_facts
+
+- name: add Name and service to tag dict
+  set_fact:
+    merged_tags: "{{ merged_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: Name, value: "{{ role_ec2_id_name }}" }
+    - { key: Service, value: ec2_vpc_net }
+
+- name: create EC2 Instance
+  ec2:
+    image: "{{ role_ec2_image_id }}"
+    instance_type: "{{ role_ec2_instance_type }}"
+    assign_public_ip: true
+    key_name: "{{ role_ec2_keypair_name }}"
+    region: "{{ role_ec2_region }}"
+    zone: "{{ role_ec2_az }}"
+    vpc_subnet_id: "{{ subnet_facts.subnets.0.id }}"
+    id: "{{ role_ec2_id_name }}"
+    exact_count: 1
+    wait: yes
+    group: "{{ role_ec2_sgp_public_tag_name }}"
+    instance_tags: "{{ merged_tags }}"
+    count_tag:
+      Name: "{{ role_ec2_id_name }}"
+  register: my_template_ec2

@@ -1,0 +1,2 @@
+---
+- import_tasks: provision/ec2.yml

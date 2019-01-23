@@ -1,0 +1,15 @@
+---
+- name: Provision VPC
+  ec2_vpc_net:
+    state: present
+    name: "{{ __vpc_name }}"
+    cidr_block: "{{ __vpc_cidr }}"
+    region: "{{ __vpc_region }}"
+    tags:
+      Name: "{{ __vpc_name }}"
+      Service: ec2_vpc_net
+      Env: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+  register: my_ec2_vpc_net

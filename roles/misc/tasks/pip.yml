@@ -1,0 +1,6 @@
+---
+- name: install Python modules
+  pip:
+    name: "{{ modules }}"
+  vars:
+    modules: "{{ ec2_common_pip_modules }}"

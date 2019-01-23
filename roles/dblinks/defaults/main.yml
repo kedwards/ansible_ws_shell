@@ -1,0 +1,51 @@
+---
+do_log: '{{ log | default("true") }}'
+
+dblinks:
+  rmd01:
+    name: RMD01.CNPL.ENBRIDGE.COM
+    user: ROME_RO
+    pass: '{{ rome_ro_pass | vault }}'
+    tns: ROMEDV01
+
+  rmt01:
+    name: RMT01.CNPL.ENBRIDGE.COM
+    user: ROME_RO
+    pass: "{{ rome_ro_pass | vault }}"
+    tns: ROMETS01
+
+  oilacct:
+    name: OILACCT.CNPL.ENBRIDGE.COM
+    user: rome
+    pass: "{{ oilacct_rome_pass | vault }}"
+    tns: OAS_PRD
+
+  orafin:
+    name: ORAFIN.CNPL.ENBRIDGE.COM
+    user: RISK
+    pass: "{{ orafin_risk_pass | vault }}"
+    tns: (DESCRIPTION=(ADDRESS_LIST=(LOAD_BALANCE=YES)(FAILOVER=YES)(ADDRESS=(PROTOCOL=tcp)(HOST=vprs0017-vip.egd.enbridge.com)(PORT=1725))(ADDRESS=(PROTOCOL=tcp)(HOST=vprs0016-vip.egd.enbridge.com)(PORT=1725)))(CONNECT_DATA=(SERVICE_NAME=EBSPRD.egd.enbridge.com)))
+
+  ra_etlm_01d:
+    name: RA_ELTM_01D.CNPL.ENBRIDGE.COM
+    user: OPENLINK
+    pass: "{{ ra_openlink_pass | vault }}"
+    tns: RAELTM01D
+
+  ra_etlm_01S:
+    name: RA_ELTM_01S.CNPL.ENBRIDGE.COM
+    user: CREDITINTERFACE
+    pass: "{{ ra_creditinterface_pass | vault }}"
+    tns: RAELTM01S
+
+  egitst:
+    name: EGITST.EGD.ENBRIDGE.COM
+    user: OPENLINK
+    pass: "{{ egitst_openlink_pass | vault }}"
+    tns: EGITST
+
+  egidev:
+    name: EGIDEV.EGD.ENBRIDGE.COM
+    user: OPENLINK
+    pass: "{{ egidev_openlink_pass | vault }}"
+    tns: EGIDEV

@@ -1,0 +1,7 @@
+**/*.pyc
+galaxy-roles/*
+logs/*
+plays/*.*
+!plays/playbook.yml
+!plays/site.yml
+!**/.gitkeep

@@ -1,0 +1,13 @@
+---
+- name: Update apt cache (Debian).
+  apt: update_cache=yes cache_valid_time=86400
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure dependencies are installed (Debian).
+  apt:
+    name:
+      - figlet
+      - net-tools
+      - python-apt
+    state: present
+  when: ansible_os_family == 'Debian'

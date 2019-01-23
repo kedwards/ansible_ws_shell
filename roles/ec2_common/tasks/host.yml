@@ -1,0 +1,37 @@
+---
+- name: preserve Hostname
+  lineinfile:
+    state: present
+    dest: /etc/cloud/cloud.cfg
+    regexp: '^preserve_hostname:\sfalse$'
+    line: "preserve_hostname: true"
+    backup: yes
+    backrefs: yes
+
+- name: verify Hostname
+  shell: >
+    hostname -f | grep -q "{{ ec2_common_fqdn }}" && echo -n ""
+  register: hostname_set
+  changed_when: hostname_set.stdout != ""
+
+- name: set Host
+  lineinfile:
+    state: present
+    dest: /etc/hosts
+    regexp: '^(127.0.1.1)\sip-.*$'
+    line: '\1 {{ ec2_common_fqdn }} {{ ec2_common_host }}'
+    backup: yes
+    backrefs: yes
+
+- name: set Hostname --static
+  command: hostnamectl set-hostname --static "{{ ec2_common_host }}" && echo -n ""
+  when: hostname_set.stdout != ""
+
+- name: ensure /etc/mailname file exists
+  copy:
+    content: "{{ ec2_common_fqdn }}"
+    dest: /etc/mailname
+    force: no
+    group: root
+    owner: root
+    mode: 0644

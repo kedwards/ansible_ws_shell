@@ -1,0 +1,22 @@
+---
+- set_fact:
+    __from_template: "{{ lookup('template', './route.j2') }}"
+  vars:
+    __to_template_vpc_routes: "{{ __vpc_routes }}"
+
+- name: Create route table
+  no_log: true
+  ec2_vpc_route_table:
+    vpc_id: "{{ my_ec2_vpc_net.vpc.id }}"
+    region: "{{ __vpc_region }}"
+    subnets: "{{ item.subnets }}"
+    routes: "{{ item.routes }}"
+    tags:
+      Name: "{{ item.name }}"
+      Service: ec2_vpc_route_table
+      Env: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+  with_items: "{{ __from_template.vpc_routes }}"
+  register: my_public_ec2_vpc_route_table

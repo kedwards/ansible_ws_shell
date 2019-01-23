@@ -1,0 +1,117 @@
+---
+- name: Download Required binaries
+  win_get_url:
+    url: "{{ item }}"
+    dest: 'd:\inetpub\{{ item | basename }}'
+    force: no
+  with_items:
+    - https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe
+    - https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe
+    - http://windows.php.net/downloads/releases/php-7.1.7-nts-Win32-VC14-x64.zip
+  tags:
+    - install
+    - visualc++
+    
+- name: Install Visual C++ 2015 Runtime(s)
+  win_package:
+    name: "{{ item.name }}"
+    path: 'd:\inetpub\{{ item.id }}'
+    product_id: "{{ item.pid }}"
+    arguments: '/q'
+    expected_return_code: [0,3010]
+  with_items:
+    - { id: 'vc_redist.x86.exe', name: 'Microsoft Visual C++ 2015 x86 Minimum Runtime - 14.0.23026', pid: '{A2563E55-3BEC-3828-8D67-E5E8B9E8B675}' }
+    - { id: 'vc_redist.x64.exe', name: 'Microsoft Visual C++ 2015 x64 Minimum Runtime - 14.0.23026', pid: '{0D3E9E15-DE7A-300B-96F1-B4AF12B96488}' }
+  tags:
+    - install
+    - visualc++
+    
+- name: Unzip PHP
+  win_unzip:
+    src: 'd:\inetpub\{{ item | basename }}'
+    dest: d:\inetpub\php
+  with_items: http://windows.php.net/downloads/releases/php-7.1.7-nts-Win32-VC14-x64.zip
+  tags:
+    - install
+    - php
+    
+- name: Configure PHP
+  win_copy:
+    src: 'd:\inetpub\php\php.ini-production'
+    dest: 'd:\inetpub\php\php.ini'
+    remote_src: True
+  tags:
+    - configure
+    - php
+    
+- name: Include vars file
+  include_vars: "vars/{{ inventory_hostname }}.yml"
+  tags:
+    - configure
+    
+- name: Configure php.ini
+  win_lineinfile:
+    path: D:\inetpub\php\php.ini
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  tags:
+    - configure
+    - php
+  with_items:
+    - { regexp: '^; extension_dir = "ext"$', line: 'extension_dir = "ext"' }
+    - { regexp: '^;cgi.force_redirect = 1$', line: 'cgi.force_redirect = 0' }
+    - { regexp: '^;fastcgi.impersonate = 1$', line: 'fastcgi.impersonate = 1' }
+    - { regexp: '^;date.timezone =$', line: 'date.timezone = {{ date_timezone }}' }
+    
+- name: Install IIS Server
+  win_feature:
+    name: Web-Server,Web-Cgi
+  tags:
+    - install
+    - iis
+    
+- name: Checkout Service-Report
+  subversion:
+    repo: https://mrmsvn/svn/mrm_systems/Infrastructure/Automation/Service-Report/trunk
+    dest: service-report
+    export: yes
+    force: yes
+    username: edwardk3
+    password: '{{ ansible_password }}'
+  delegate_to: 127.0.0.1
+  run_once: true
+  tags:
+    - svn 
+
+- name: Zip 
+  archive:
+    path: service-report
+    dest: service-report.zip
+    format: zip
+    remove: no
+  delegate_to: 127.0.0.1
+  tags:
+    - zip
+    
+- name: Deploy Service-Report
+  win_copy:
+    src: service-report.zip
+    dest: 'd:\inetpub\wwwroot'
+  tags:
+    - deploy
+
+- name: Unzip Service-Report
+  win_unzip:
+    src: D:\inetpub\wwwroot\service-report.zip
+    dest: D:\inetpub\wwwroot
+    creates: D:\inetpub\wwwroot
+  tags:
+  - deploy
+
+- name: win_zip the inet log directory and then remove the src directory after completion
+  win_zip:
+    src: service-report
+    dest: service-report.zip
+    rm: false    
+  tags:
+    - zip_test

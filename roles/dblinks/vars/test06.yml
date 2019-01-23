@@ -1,0 +1,7 @@
+---
+database:
+  hostname: olt06.cnpl.enbridge.com
+  user: endur
+  password: '{{ endur_pass | vault }}'
+  service_name: olt06
+  port: 62035

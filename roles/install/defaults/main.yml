@@ -1,0 +1,12 @@
+---
+vendor: Openlink
+product_name: Endur
+product_build_id: V14_0_08082015ENBR_03162017_1115
+product_executable: V14_0_08082015ENBR_03162017_BUILD_1115
+install_state: present
+root: D:\automation
+repository: 'http://mrmwebp.enbridge.com/OLFShare'
+
+automation_path: '{{ root }}\{{ product_build_id }}'
+file_repository: '{{repository }}/{{ product_build_id }}'
+product_path: 'D:\{{ vendor }}\{{ product_name }}\{{ product_build_id }}'

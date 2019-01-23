@@ -1,0 +1,7 @@
+---
+- import_tasks: configure/repository.yml
+  when: php_packages is defined
+
+- name: Run geerlingguy.php role
+  import_role:
+    name: geerlingguy.php

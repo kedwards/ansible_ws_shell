@@ -1,0 +1,12 @@
+---
+- name: Remove old MOTD directory
+  file:
+    state: absent
+    path: /etc/motd
+
+- name: Create symbolic link for MOTD
+  file:
+    src: /var/run/motd.dynamic.new
+    dest: /var/run/motd.dynamic
+    state: link
+    force: yes

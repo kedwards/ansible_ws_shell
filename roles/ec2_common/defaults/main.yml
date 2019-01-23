@@ -1,0 +1,22 @@
+---
+ec2_common_host:
+ec2_common_domain:
+ec2_common_fqdn: "{{ ec2_common_host }}.{{ ec2_common_domain }}"
+
+ec2_common_packages:
+  - curl
+  - figlet
+  - python-pip
+  - python-setuptools
+
+ec2_common_python_modules:
+  - botocore
+  - boto3
+
+ec2_common_cli53_dest: /usr/local/bin/cli53
+ec2_common_cli53_url: https://github.com/barnybug/cli53/releases/download/0.8.12/cli53-linux-amd64
+
+ec2_common_dropbox_dest: /usr/local/bin/dropbox
+ec2_common_dropbox_url: https://www.dropbox.com/download?dl=packages/dropbox.py
+ec2_common_dropbox_setup_dest: /home/admin/dropbox-setup.tar.gz
+ec2_common_dropbox_setup_url: https://www.dropbox.com/download?plat=lnx.x86_64

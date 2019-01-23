@@ -1,0 +1,8 @@
+---
+- name: check or create 10-sysinfo MOTD file
+  copy:
+    src: 10-sysinfo.motd.sh
+    dest: /etc/update-motd.d/10-sysinfo
+    owner: root
+    group: root
+    mode: "u+rwx,g-rwx,o+rw"

@@ -1,0 +1,6 @@
+---
+- import_tasks: configure/forwarding.yml
+
+- import_tasks: configure/iptables.yml
+
+- import_tasks: install/packages.yml

@@ -1,0 +1,13 @@
+---
+ansible_default_packages:
+  - make
+  - git
+  - python-setuptools
+  - gcc
+  - python-dev
+  - libffi-dev
+  - libssl-dev
+  - python-packaging
+  - libyaml-dev
+
+packages: "{{ ansible_default_packages }} + {{ ansible_packages }}"

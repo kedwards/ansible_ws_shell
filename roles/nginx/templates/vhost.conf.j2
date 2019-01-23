@@ -1,0 +1,66 @@
+map $status $loggable {
+    ~^[23]  0;
+    default 1;
+}
+
+limit_req_zone $binary_remote_addr zone={{ item.value.server_fqdn }}:10m rate=1r/s;
+
+map $scheme $hsts_header {
+    https max-age=31536000;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ item.value.server_fqdn }};
+
+    root /var/www/{{ item.key }};
+    index index.html index.php;
+
+    access_log /var/log/nginx/{{ item.key }}.log combined if=$loggable;
+
+    client_max_body_size 20M;
+    charset UTF-8;
+
+    gzip on;
+    gzip_http_version 1.1;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_proxied any;
+    gzip_types text/plain text/xml text/css application/x-javascript;
+
+    resolver 8.8.8.8 8.8.4.4 valid=86400;
+    resolver_timeout 5s;
+
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+        autoindex on;
+    }
+
+    # Directives to send expires headers and turn off 404 error logging.
+    location ~* ^.+\.(js|css|png|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|rss|atom|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ {
+        access_log off;
+        log_not_found off;
+        expires max;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix://var/run/php/php7-3-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        fastcgi_read_timeout 150;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_script_name;
+        fastcgi_param APPLICATION_ENV production;
+        include fastcgi_params;
+    }
+}

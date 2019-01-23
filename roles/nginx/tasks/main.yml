@@ -1,0 +1,21 @@
+---
+- name: Run nginx role
+  import_role:
+    name: nginxinc.nginx
+
+- import_tasks: remove/default.yml
+  when: not __nginx_keep_only_specified
+
+- import_tasks: remove/sites.yml
+  when: not __nginx_keep_only_specified
+
+- import_tasks: remove/config.yml
+  when: not __nginx_keep_only_specified
+
+- import_tasks: create/dirs.yml
+
+- import_tasks: configure/nginx.yml
+
+- import_tasks: configure/sites.yml
+  notify:
+    - restart nginx

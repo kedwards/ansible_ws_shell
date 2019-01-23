@@ -1,0 +1,10 @@
+---
+- include: facts.yml
+   
+- name: Openlink Endur Services Manager
+  win_service:
+    name: "{{ item }}"
+    start_mode: "{{ service_mode }}"
+    state: "{{ service_state }}"
+  with_items: "{{ service }}"
+  when: is_valid_service_cfg 

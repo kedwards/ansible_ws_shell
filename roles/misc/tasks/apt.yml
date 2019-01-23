@@ -1,0 +1,10 @@
+---
+- name: 'Apt: Update repositories cache'
+  apt:
+    update_cache: yes
+
+- name: 'Apt: Install required packages'
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages: "{{ ec2_common_apt_packages }}"

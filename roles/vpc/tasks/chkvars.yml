@@ -1,0 +1,13 @@
+#
+# Checking that required variables are set
+#
+- name: Checking that required variables are set
+  fail: msg="{{ item }} is not defined"
+  when: not {{ item }}
+  with_items:
+    - vpc_environment
+    - vpc_owner_name
+    - vpc_region
+    - vpc_ec2_image_id
+    - vpc_my_ip_cidr
+    - vpc_ec2_keypair_name

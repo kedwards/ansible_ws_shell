@@ -1,0 +1,24 @@
+---
+- name: Allocate and attach EIP to ENI
+  ec2_eip:
+    state: present
+    in_vpc: yes
+    reuse_existing_ip_allowed: yes
+    allow_reassociation: yes
+    device_id: "{{ my_ec2_eni.interface.id }}"
+    private_ip_address: "{{ __vpc_eni_private_ip_address }}"
+    region: "{{ __vpc_region }}"
+  register: my_ec2_eip
+
+- name: Attach tags to EIP resource
+  ec2_tag:
+    state: present
+    region: "{{ __vpc_region }}"
+    resource: "{{ my_ec2_eip.allocation_id }}"
+    tags:
+      Name: "{{ __vpc_eip_name }}"
+      Service: ec2_eip
+      Env: "{{ __vpc_tag_env }}"
+      Owner: "{{ __vpc_tag_owner }}"
+      Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
