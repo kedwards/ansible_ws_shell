@@ -1,0 +1,16 @@
+[lbs]
+lb
+
+[apps]
+app1
+app2
+app3 ansible_user=devops ansible_ssh_pass=codespaces
+
+
+[dbs]
+db
+
+[prod:children]
+lbs
+apps
+dbs

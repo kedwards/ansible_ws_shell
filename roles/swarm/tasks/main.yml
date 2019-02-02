@@ -1,0 +1,26 @@
+---
+- import_tasks: manager.yml
+  tags:
+    - swarm_status
+
+- import_tasks: worker.yml
+  tags:
+    - swarm_status
+
+- import_tasks: init_swarm.yml
+  tags:
+    - init
+
+- import_taks: tokens.yml
+  tags:
+    - tokens
+
+- import_taks: join_managers.yml
+  tags:
+    - join
+    - managers
+
+- import_taks: join_workers.yml
+  tags:
+    - join
+    - workers

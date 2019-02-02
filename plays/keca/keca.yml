@@ -1,0 +1,6 @@
+---
+- name: KECA
+  hosts: local
+  become: no
+  roles:
+    - keca_system

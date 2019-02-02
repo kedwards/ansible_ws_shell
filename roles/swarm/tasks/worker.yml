@@ -1,0 +1,45 @@
+---
+# determine the status of each worker node and break them
+# into two groups:
+#   - swarm_worker_operational (host is joined to the swarm cluster)
+#   - swarm_worker_bootstrap (host needs to be joined to the cluster)
+- name: determine swarm status
+  shell: >
+    docker info | egrep '^Swarm: ' | cut -d ' ' -f2
+  register: swarm_status
+  when: use_docker_info
+
+- name: load docker info as facts (determine swarm status)
+  docker_info_facts:
+  when: not use_docker_info
+
+- name: create swarm_worker_operational group
+  add_host:
+    hostname: "{{ item }}"
+    groups: swarm_worker_operational
+  with_items: "{{ play_hosts }}"
+  when:
+    -  use_docker_info
+    - "'active' in swarm_status.stdout_lines"
+  run_once: true
+
+- name: create swarm_worker_operational group
+  add_host:
+    hostname: "{{ item }}"
+    groups: swarm_worker_operational
+  with_items: "{{ play_hosts }}"
+  when:
+    -  not use_docker_info
+    - hostvars[item]['docker_info']['Swarm']['LocalNodeState'] == 'active'
+  run_once: true
+
+- name: create swarm_worker_bootstrap group
+  add_host:
+    hostname: "{{ item }}"
+    groups: swarm_worker_bootstrap
+  with_items: "{{ play_hosts }}"
+  when:
+    - use_docker_info
+    - "'active' not in swarm_status.stdout_lines"
+    - hostvars[item]['docker_info']['Swarm']['LocalNodeState'] != 'active'
+  run_once: true

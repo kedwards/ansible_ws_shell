@@ -1,0 +1,2 @@
+edwardk3_password_crypt: gAAAAABZ7g0rmrVgFirVCnN86rmA1iShHyio24NE-CtnUCcin87YL5b_zS_2nwUVivAdxB8lG0VtKWOBNf9uEOacxlfGYHXpTw==
+ansible_password: "{{ edwardk3_password_crypt | vault }}"

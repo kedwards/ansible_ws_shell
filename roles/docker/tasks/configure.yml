@@ -1,0 +1,13 @@
+---
+- name: "Add docker group"
+  group:
+    name: docker
+    state: present
+
+- name: "Add users to docker group"
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  with_items: "{{ vagrant.users }}"
+  notify: restart docker service

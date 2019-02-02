@@ -1,0 +1,4 @@
+---
+# defaults file for swarm
+use_docker_info: false
+iface: "{{ swarm_iface | default('eth1') }}"

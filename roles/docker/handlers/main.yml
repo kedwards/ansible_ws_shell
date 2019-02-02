@@ -1,29 +1,12 @@
 ---
-- name: restart nginx
-  debug: msg="checking config first"
-  changed_when: true
-  notify:
-    - check nginx configuration
-    - restart nginx service - after config check
+- name: update apt package index
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+    force_apt_get: yes
 
-- name: reload nginx
-  debug: msg="checking config first"
-  changed_when: true
-  notify:
-    - check nginx configuration
-    - reload nginx service - after config check
-
-- name: restart nginx service - after config check
-  systemd:
+- name: restart docker service
+  service:
+    name: docker
     state: restarted
-    daemon_reload: yes
-
-- name: reload nginx service - after config check
-  systemd:
-    name: nginx
-    state: reloaded
-
-- name: check nginx configuration
-  command: "{{ __nginx_binary_name }} -t -c {{ __nginx_conf_dir }}/nginx.conf"
-  register: result
-  changed_when: "result.rc != 0"

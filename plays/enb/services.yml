@@ -1,0 +1,9 @@
+---
+# ansible <host[s]>, -m win_service -a "name=OpenLink_EndurTEST06 state=started"
+- name: Services (mrm.systems@enbridge.com)
+  hosts: vp_web,ew_web,vp_all,ew_all
+  any_errors_fatal: yes
+  gather_facts: false
+  roles:
+    - { role: service_manager, when: (item.hosts is defined and inventory_hostname in item.hosts and not item.name | search("Example-")) }
+    - { role: service-report, when: (inventory_hostname == "VPWV0310" or  inventory_hostname == "EWWV0435") }

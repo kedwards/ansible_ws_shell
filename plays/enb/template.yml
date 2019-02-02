@@ -1,0 +1,19 @@
+---
+ - name: Create Template Box
+   hosts: "tag_Name_Template"
+   gather_facts: false
+   remote_user: admin
+   become: yes
+   vars:
+     aws_region: ca-central-1
+     mariadb_databases: []
+     mariadb_users:
+       - name: kewards
+         password: Alicia2010&Robert2011
+         priv: '*.*:ALL,GRANT'
+         append_privs: 'yes'
+         host: '%'
+     mariadb_root_password: 3UU9x5!Y%PRy
+   roles:
+     - keca_template
+     - mariadb

@@ -1,0 +1,31 @@
+---
+- import_playbook: db.yml
+
+- name: application deployment
+  hosts: apps
+  become: true
+  serial: 1
+  pre_tasks:
+    - name: remove app server from load balancer
+      haproxy:
+        state: disabled
+        host: "{{ inventory_hostname }}"
+      delegate_to: lb
+  roles:
+    - apache
+    - php-cs
+    - frontend
+  post_tasks:
+    - name: wait for webserver to be available
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 80
+        timeout: 300
+        delay: 10
+        state: started
+      delegate_to: localhost
+    - name: add server to load balancer
+      haproxy:
+        state: disabled
+        host: "{{ inventory_hostname }}"
+      delegate_to: lb

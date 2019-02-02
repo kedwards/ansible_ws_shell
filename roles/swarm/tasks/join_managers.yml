@@ -1,0 +1,11 @@
+---
+# join the hosts not yet initialized to the swarm cluster
+- name: join manager nodes to cluster
+  shell: >
+    docker swarm join
+    --advertise-addr={{ swarm_iface | default('eth1') }}:2377
+    --token={{ hostvars[groups['swarm_manager_operational'][0]]['swarm_manager_token']['stdout'] }}
+    {{ groups['swarm_manager_ips'][0] }}:2377
+  when:
+    - inventory_hostname in groups['swarm_manager_bootstrap']
+    - inventory_hostname not in groups['swarm_manager_operational']

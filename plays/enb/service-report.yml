@@ -1,0 +1,7 @@
+---
+- name: Service-Report (mrm.systems@enbridge.com)
+  hosts: vp_web,ew_web
+  any_errors_fatal: yes
+  gather_facts: false
+  roles:
+    - service-report

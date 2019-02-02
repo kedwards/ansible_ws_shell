@@ -1,0 +1,26 @@
+---
+domain: kevinedwards.ca
+owner_name: kedwards
+region: ca-central-1
+merged_tags: {}
+native_tags:
+  - Name:
+  - Service:
+  - Owner: "{{ owner_name }}"
+  - Created: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+  - Expired: "{{ lookup('pipe', 'date -d \"1 year\" +\"%Y%m%d\"') }}"
+
+users:
+  admin:
+    uid: 5001
+    shell: /bin/bash
+    home: /home/admin
+    state: present
+  dojo:
+    state: absent
+      
+systems: 
+  packages: 
+    - ntp 
+    - tree 
+    - vim

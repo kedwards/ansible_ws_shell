@@ -1,0 +1,38 @@
+# Local control machine
+[local]
+localhost ansible_connection=local
+
+# ewrv8002.cnpldev.enbridgedev.net
+[vpc]
+10.66.120.143
+[vpc:vars]
+ansible_user=enbridge
+private_key_file=~/.ssh/vpc.key
+
+# get windows connection requirements for demo group
+[win_conn:children]
+demo
+
+# cnpl domain authentication
+[cnpl_auth:children]
+demo
+
+[demo:children]
+demo_app
+demo_ctx
+
+[demo:vars]
+ansible_user=svc_olf_app13@cnpl.enbridge.com
+
+[demo_app]
+vpwv0315ap04d.cnpl.enbridge.com
+vpwv0281ap01.cnpl.enbridge.com
+
+[demo_app:vars]
+var_server_type=app
+
+[demo_ctx]
+vpwv5171.cnpl.enbridge.com
+
+[demo_ctx:vars]
+var_server_type=citrix

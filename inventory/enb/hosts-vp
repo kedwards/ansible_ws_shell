@@ -1,0 +1,85 @@
+# windows connection settings
+[win_conn:children]
+vp_all
+web
+
+# Web Server authentication
+[web:children]
+vp_web
+
+# cnpl domain authentication
+[cnpl_auth:children]
+vp_all
+
+[vp_all:children]
+vp_app_all
+vp_ctx_all
+vp_ecom
+[vp_all:vars]
+host_loc=toronto
+# The below value MUST be set for the correct DATA CENTER enviornment [ prod | nonprod ]
+host_env=nonprod
+
+[vp_app_all:children]
+vp_app
+vp_dev_app
+[vp_app_all:vars]
+server_type=app
+
+[vp_ctx_all:children]
+vp_ctx
+vp_dev_ctx
+[vp_ctx_all:vars]
+server_type=citrix
+ansible_user=svc_olf_app01@cnpl.enbridge.com
+
+[vp_dev_app]
+VPWV0314AP03D ansible_host=vpwv0314ap03d.cnpl.enbridge.com 
+VPWV0315AP03D ansible_host=vpwv0315ap04d.cnpl.enbridge.com
+[vp_dev_app:vars]
+ansible_user=svc_olf_app01@cnpl.enbridge.com
+
+[vp_dev_ctx]
+VPWV5170 ansible_host=vpwv5170.cnpl.enbridge.com
+VPWV5171 ansible_host=vpwv5171.cnpl.enbridge.com
+VPWV5172 ansible_host=vpwv5172.cnpl.enbridge.com
+VPWV5173 ansible_host=vpwv5173.cnpl.enbridge.com
+
+[vp_app]
+VPWV0281AP01 ansible_host=vpwv0281ap01.cnpl.enbridge.com ansible_user=svc_olf_app01@cnpl.enbridge.com
+VPWV0282AP02 ansible_host=vpwv0282ap02.cnpl.enbridge.com ansible_user=svc_olf_app02@cnpl.enbridge.com
+VPWV0283AP03 ansible_host=vpwv0283ap03.cnpl.enbridge.com ansible_user=svc_olf_app03@cnpl.enbridge.com
+VPWV0284AP04 ansible_host=vpwv0284ap04.cnpl.enbridge.com ansible_user=svc_olf_app04@cnpl.enbridge.com
+VPWV0285AP05 ansible_host=vpwv0285ap05.cnpl.enbridge.com ansible_user=svc_olf_app05@cnpl.enbridge.com
+VPWV0286AP06 ansible_host=vpwv0286ap06.cnpl.enbridge.com ansible_user=svc_olf_app06@cnpl.enbridge.com
+VPWV0287AP07 ansible_host=vpwv0287ap07.cnpl.enbridge.com ansible_user=svc_olf_app07@cnpl.enbridge.com
+VPWV0288AP08 ansible_host=vpwv0288ap08.cnpl.enbridge.com ansible_user=svc_olf_app08@cnpl.enbridge.com
+VPWV0289AP09 ansible_host=vpwv0289ap09.cnpl.enbridge.com ansible_user=svc_olf_app09@cnpl.enbridge.com
+VPWV0290AP10 ansible_host=vpwv0290ap10.cnpl.enbridge.com ansible_user=svc_olf_app10@cnpl.enbridge.com
+VPWV0291AP11 ansible_host=vpwv0291ap11.cnpl.enbridge.com ansible_user=svc_olf_app11@cnpl.enbridge.com
+VPWV0292AP12 ansible_host=vpwv0292ap12.cnpl.enbridge.com ansible_user=svc_olf_app12@cnpl.enbridge.com
+VPWV0293AP13 ansible_host=vpwv0293ap13.cnpl.enbridge.com ansible_user=svc_olf_app13@cnpl.enbridge.com
+VPWV0294AP14 ansible_host=vpwv0294ap14.cnpl.enbridge.com ansible_user=svc_olf_app14@cnpl.enbridge.com
+VPWV0295AP15 ansible_host=vpwv0295ap15.cnpl.enbridge.com ansible_user=svc_olf_app15@cnpl.enbridge.com
+VPWV0296AP16 ansible_host=vpwv0296ap16.cnpl.enbridge.com ansible_user=svc_olf_app16@cnpl.enbridge.com
+VPWV0297AP17 ansible_host=vpwv0297ap17.cnpl.enbridge.com ansible_user=svc_olf_app17@cnpl.enbridge.com
+VPWV0298AP18 ansible_host=vpwv0298ap18.cnpl.enbridge.com ansible_user=svc_olf_app18@cnpl.enbridge.com
+VPWV0299AP19 ansible_host=vpwv0299ap19.cnpl.enbridge.com ansible_user=svc_olf_app19@cnpl.enbridge.com
+VPWV0300AP20 ansible_host=vpwv0300ap20.cnpl.enbridge.com ansible_user=svc_olf_app20@cnpl.enbridge.com
+
+[vp_ctx]
+VPWV0301 ansible_host=vpwv0301.cnpl.enbridge.com
+VPWV0302 ansible_host=vpwv0302.cnpl.enbridge.com
+VPWV0303 ansible_host=vpwv0303.cnpl.enbridge.com
+VPWV0304 ansible_host=vpwv0304.cnpl.enbridge.com
+VPWV0305 ansible_host=vpwv0305.cnpl.enbridge.com
+VPWV0306 ansible_host=vpwv0306.cnpl.enbridge.com
+
+[vp_ecom]
+VPWV0307 ansible_host=vpwv0307.cnpl.enbridge.com
+VPWV0308 ansible_host=vpwv0308.cnpl.enbridge.com
+[vp_ecom:vars]
+ansible_user=svc_olf_app01@cnpl.enbridge.com
+
+[vp_web]
+VPWV0310 ansible_host=vpwv0310.cnpl.enbridge.com ansible_user='corp\apps-edwardk3'

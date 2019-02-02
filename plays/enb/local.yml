@@ -1,0 +1,13 @@
+---
+ - name: Create KECA VPC
+   hosts: localhost
+   connection: local
+   gather_facts: false
+   remote_user: admin
+   tasks:
+     - ec2_instance_facts:
+       register: ec2_facts
+
+     - name: debug
+       debug:
+         msg: "{{ ec2_facts }}"

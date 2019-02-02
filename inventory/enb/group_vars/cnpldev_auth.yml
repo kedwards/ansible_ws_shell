@@ -1,0 +1,2 @@
+password_crypt: gAAAAABY9ic_4qy2g6Q4yEofWtoVNL9tPnfhk1ESM22jbOZFA7aI0qwy1U4Gec-7ddwylLtOIMTUTBoWlp0Zf1WWHRI77sVULQ==
+ansible_password: "{{ password_crypt | vault }}"

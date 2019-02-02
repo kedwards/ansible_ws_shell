@@ -1,0 +1,4 @@
+---
+- name: Update facts
+  hosts: prod
+  gather_facts: True

@@ -1,0 +1,7 @@
+---
+- name: Database (mrm.systems@enbridge.com)
+  hosts: local
+  any_errors_fatal: yes
+  gather_facts: false
+  roles:
+    - dblinks

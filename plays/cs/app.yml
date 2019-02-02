@@ -1,0 +1,13 @@
+---
+- name: App server playbook
+  hosts: apps
+  become: true
+  vars:
+    fav:
+      fruit: always-mangoes
+  roles:
+    - { role: apache, tags: www }
+    - { role: php-cs, tags: [ 'www', 'php' ] }
+    - { role: frontend, tags: devopsdemo }
+  tags: 
+    - frontend
