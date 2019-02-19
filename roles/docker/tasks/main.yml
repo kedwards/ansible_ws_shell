@@ -7,11 +7,16 @@
   tags:
     - install
 
-- import_taks: install.yml
+- import_tasks: install.yml
   tags:
     - install
 
-- import_taks: configure.yml
+- import_tasks: configure.yml
   tags:
     - install
     - configure
+
+- import_tasks: docker-machine.yml
+  tags:
+    - machine
+

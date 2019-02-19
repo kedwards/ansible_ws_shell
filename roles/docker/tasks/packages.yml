@@ -14,5 +14,7 @@
       - software-properties-common
       - gnupg2
       - curl
-      - python-dev
-      - python-pip
+        #      - python-dev
+        #      - python-pip
+        #      - openjdk-8-jdk
+      - openjdk-8-jdk-headless

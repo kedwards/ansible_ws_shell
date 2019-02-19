@@ -1,4 +1,12 @@
 ---
+- name: Create remote_tmp directory
+  file:
+    path: /root/.ansible/tmp
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
 - name: Add Apt signing key from official docker repo
   apt_key:
     url: https://download.docker.com/linux/debian/gpg

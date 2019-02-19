@@ -4,10 +4,45 @@
     name: docker
     state: present
 
+- name: Add users
+  user:
+    name: "{{ item }}"
+    shell: /bin/bash
+    groups: docker
+    password: "{{ upasswd | password_hash('sha512') }}"
+    append: yes
+  with_items: "{{ vagrant.users }}"
+
 - name: "Add users to docker group"
   user:
     name: "{{ item }}"
     groups: docker
     append: yes
   with_items: "{{ vagrant.users }}"
-  notify: restart docker service
+  notify:
+    - restart docker service
+
+- name: Get my SSH public keys
+  delegate_to: localhost
+  become: no
+  shell: ssh-add -L
+  register: ssh_keys
+
+- name: Install my SSH public keys on Remote Servers
+  authorized_key: 
+    user: "{{ item.0 }}"
+    key: "{{ item.1 }}"
+#    key: "{{ lookup('file', '/home/kedwards/.ssh/id_rsa.pub') }}"
+    state: present
+  with_nested:
+    - "{{ vagrant.users }}"
+    - "{{ ssh_keys.stdout }}"
+
+- name: copy ssh file
+  copy:
+    src: /home/kedwards/.ssh/id_rsa
+    dest: "/home/{{ item }}/.ssh/id_rsa"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: 0700
+  with_items: "{{ vagrant.users }}"

@@ -1,0 +1,19 @@
+---
+- name: Check if machine exists in docker-machine
+  become: no
+  delegate_to: localhost
+  shell: "docker-machine ls --filter name={{ inventory_hostname }} | awk 'NR>1 { printf $5 }'"
+  register: machine_data
+
+- name: Add machine to docker-machine
+  become: no
+  delegate_to: localhost
+  shell: "docker-machine create -d generic --generic-ip-address {{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }} --generic-ssh-port 22 --generic-ssh-key ~/.ssh/id_rsa --generic-ssh-user vagrant {{ inventory_hostname }}"
+  when: machine_data.stdout == ""
+
+- name: Open docker port on Jenkins host
+  lineinfile:
+    path: /etc/default/docker
+    line: "DOCKER_OPTS='-H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock"
+  notify:
+    - restart docker service

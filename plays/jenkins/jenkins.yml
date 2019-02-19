@@ -1,0 +1,11 @@
+---
+- name: Configure jenkins Servers
+  hosts: jenkins-*
+  become: yes
+  vars:
+    upasswd: vagrant
+  roles:
+    - docker
+#    - { role: f500.dumpall, dumpall_host_destination: ./ }
+#  tasks:
+#    - debug: var=hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address']
