@@ -1,0 +1,6 @@
+---
+- name: Install Postman
+  snap:
+    name:
+      - postman
+    
