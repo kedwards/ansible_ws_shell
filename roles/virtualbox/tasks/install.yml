@@ -1,0 +1,10 @@
+---
+- name: Install packages
+  apt:
+    name: "{{ packagesdep }}"
+    force_apt_get: yes
+    state: latest
+    update_cache: yes
+  vars:
+    packagesdep:
+      - virtualbox

@@ -1,5 +1,0 @@
----
-# tasks file for keca_system
-- import_tasks: deps.yml
-
-- import_tasks: install.yml

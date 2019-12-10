@@ -1,0 +1,4 @@
+---
+- name: Install packages
+  apt:
+    deb: https://go.microsoft.com/fwlink/?LinkID=760868

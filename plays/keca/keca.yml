@@ -1,6 +1,13 @@
 ---
 - name: KECA
   hosts: local
-  become: no
+  become: yes
   roles:
-    - keca_system
+    - docker
+    - docker-compose
+    - docker-machine
+    - skype
+    - dropbox
+    - vscode
+    - vagrant
+    - virtualbox

@@ -1,0 +1,6 @@
+---
+- name: Ensure docker-compose is installed and available
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ version }}/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}"
+    dest: /usr/local/bin/docker-compose
+    mode: 'a+x'
