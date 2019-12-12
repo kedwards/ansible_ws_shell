@@ -1,0 +1,6 @@
+---
+- name: Install (awscli) python package.
+  pip:
+    name: awscli
+    extra_args: "--upgrade --user"
+    executable: pip3

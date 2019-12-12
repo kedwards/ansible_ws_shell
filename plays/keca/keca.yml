@@ -12,3 +12,5 @@
     - vagrant
     - virtualbox
     - postman
+    - terraform
+    - awscli
