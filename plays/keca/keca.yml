@@ -14,3 +14,5 @@
     - postman
     - terraform
     - awscli
+    - packer
+    - aws-vault
