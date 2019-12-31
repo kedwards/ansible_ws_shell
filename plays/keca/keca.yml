@@ -16,3 +16,4 @@
     - awscli
     - packer
     - aws-vault
+    - nodejs
