@@ -17,3 +17,4 @@
     - packer
     - aws-vault
     - nodejs
+    - golang
